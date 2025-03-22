@@ -407,7 +407,56 @@ def coordinatorlogin(request):
     return render(request, "App/coordinatorlogin.html")
 
 
+# def validate_coordinator(request):
+#     data=json.loads(request.body)
+#     userid=data.get("userid")
+#     pass1=data.get("pass")
+#     user='notok'
+#     passw='notok'
+#     pass2=coordinator_collection.find_one({"userId":userid})
+#     if pass2:
+#         user="ok"
+#         if bcrypt.checkpw(pass1.encode("utf-8"),pass2.encode("utf-8")):
+#             passw="ok"
+#     res={"user":user,"passw":passw}
+#     return JsonResponse({"resp":res})
+@csrf_exempt
+def validate_coordinator(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)  # 405 Method Not Allowed
 
+    try:
+        # ✅ Handle empty body safely
+        if not request.body:
+            return JsonResponse({"error": "Empty request body"}, status=400)
+
+        data = json.loads(request.body.decode("utf-8"))
+
+        userid = data.get("userid")
+        pass1 = data.get("pass")
+
+        if not userid or not pass1:
+            return JsonResponse({"error": "Missing userid or password"}, status=400)
+
+        # Default response
+        response = {"user": "notok", "passw": "notok"}
+
+        # Fetch user details in a single query
+        user_record = coordinator_collection.find_one({"userId": userid}, {"password": 1})
+
+        if user_record:
+            response["user"] = "ok"
+            hashed_password = user_record.get("password")  # Retrieve hashed password from DB
+
+            if hashed_password and bcrypt.checkpw(pass1.encode("utf-8"), hashed_password.encode("utf-8")):
+                response["passw"] = "ok"
+
+        return JsonResponse({"resp": response})
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON format"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 logger = logging.getLogger(__name__)

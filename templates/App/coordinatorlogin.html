@@ -42,6 +42,14 @@
       border-radius: 15px;
     }
 
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+      text-align: left;
+      padding-left: 0.5rem;
+    }
+
     .form-title-signIn {
       color: #3b39d1;
       font-size: 2rem;
@@ -139,7 +147,7 @@
     <div class="login">
       <p class="form-title-signIn">Sign in to Coordinator account</p>
       <div class="input-container-signIn">
-        <form action='/coordinatorlogin' method="post">
+        <form action='/coordinatorlogin' method="post" id="loginform">
           {% csrf_token %}
           <input type="text" id="username" name="userId" placeholder="Enter Username">
           <div class="error" id="usererror"></div>
@@ -165,7 +173,70 @@
     </div>
 
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("signInButton").addEventListener("click", async function (e) {
+        e.preventDefault();
 
+        let pass = document.getElementById("password").value.trim();
+        let userid = document.getElementById("username").value.trim();
+        document.getElementById("usererror").textContent = "";
+        document.getElementById("passerror").textContent = "";
+        let isValid = true;
+        if (userid === "") {
+          document.getElementById("usererror").textContent = "Please Enter userId!";
+          isValid = false;
+        }
+        if (pass === "") {
+          document.getElementById("passerror").textContent = "Please Enter password!";
+          isValid = false;
+        }
+
+        try {
+          if (isValid) {
+
+            const response = await fetch("/validate-coordinator/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ pass: pass, userid: userid }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();  
+              console.error("Server Error Response:", errorText);
+              throw new Error("Failed to validate: " + errorText);
+            }
+
+            const data = await response.json(); 
+            console.log("Coordinator validated successfully:", data);
+
+            let resp = data.resp;
+
+
+            if (resp.user !== "ok") {
+              document.getElementById("usererror").textContent = "UserId not found!";
+              isValid = false;
+            }
+            if (resp.passw !== "ok") {
+              document.getElementById("passerror").textContent = "Invalid password!";
+              isValid = false;
+            }
+
+            if (isValid) {
+              document.getElementById("loginform").submit();
+            }
+
+          }
+
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+    });
+
+  </script>
 
 </body>
 

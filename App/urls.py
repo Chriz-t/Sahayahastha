@@ -35,4 +35,5 @@ urlpatterns = [
     path('get-requests/',views.get_requests,name='get-requests'),
     path('delete-request/',views.delete_request,name="delete-request"),
     path('update-request/',views.update_request,name="update-request"),
+    path('validate-coordinator/',views.validate_coordinator,name="validate-coordinator"),
 ]
