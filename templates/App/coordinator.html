@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Coordinator Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .wrapper {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    header {
+      background: #05124e;
+      color: #ebebd3;
+      position: relative;
+      padding: 1em 0;
+    }
+
+    header::after {
+      content: "";
+      clear: both;
+      display: block;
+    }
+
+    .logo {
+      float: left;
+      font-size: 1rem;
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .logo span {
+      font-weight: 400;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      background: #464655;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.5s ease-in-out;
+    }
+
+    .main-nav-open {
+      height: auto;
+    }
+
+    .main-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-nav li {
+      border-bottom: 1px solid #575766;
+    }
+
+    .main-nav li:last-child {
+      border-bottom: none;
+    }
+
+    .main-nav a {
+      color: white;
+      display: block;
+      padding: 1em 1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .main-nav a:hover,
+    .main-nav a:focus {
+      background: #e4b363;
+      color: #464655;
+    }
+
+    .nav-icon {
+      display: inline-block;
+      font-size: 1.3em;
+      margin-right: .5em;
+      text-align: center;
+      width: 1.1em;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .menu-toggle {
+      padding: 1em;
+      position: absolute;
+      top: 0.5em;
+      right: 0.2em;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hamburger,
+    .hamburger::before,
+    .hamburger::after {
+      content: "";
+      display: block;
+      background: #ebebd3;
+      height: 3px;
+      width: 30px;
+      transition: all ease-in-out 500ms;
+    }
+
+    .hamburger::before {
+      transform: translateY(-6px);
+    }
+
+    .hamburger::after {
+      transform: translateY(3px);
+    }
+
+    .open .hamburger {
+      transform: rotate(45deg);
+    }
+
+    .open .hamburger::before {
+      opacity: 0;
+    }
+
+    .open .hamburger::after {
+      transform: rotate(90deg) translateY(3px);
+    }
+
+    @media only screen and (min-width: 700px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      .main-nav {
+        height: auto;
+        position: relative;
+        background: transparent;
+        float: right;
+      }
+
+      .main-nav li {
+        display: inline-block;
+        border: none;
+      }
+
+      .main-nav a {
+        padding: 0;
+        margin-left: 2em;
+      }
+
+      .main-nav a:hover,
+      .main-nav a:focus {
+        background: transparent;
+      }
+
+      .nav-icon {
+        display: none;
+      }
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-image: url(/static/blue1.jpg);
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: #002855;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 10px;
+      background: #002855;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .Disaster-Relief-Portal {
+      background: #003366;
+    }
+
+    .header1 {
+      background: #003366;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+
+    .header {
+      background: #003366;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dashboard {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #003366;
+    }
+
+    .camp-status {
+      background: #28a745;
+      color: white;
+      padding: 8px 12px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: bold;
+      display: inline-block;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+
+    .camp-status.inactive {
+      background: #dc3545;
+    }
+
+    .outer-div {
+      display: flex;
+      width: 100%;
+      height: 550px;
+      background: #f4f4f9;
+      padding: 20px;
+      box-sizing: border-box;
+      gap: 20px;
+    }
+
+    .inner-div {
+      flex: 1;
+      padding: 0 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .occupancy {
+      padding: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      text-align: center;
+      border-radius: 5px;
+      color: white;
+    }
+
+    .summary-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .summary-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header1">
+    <img src="/static/ksdma2.jpg" alt="Government Logo" height="50"
+      style="vertical-align: middle; border-radius: 100%; margin-right: 3%;"> Disaster Relief Portal
+  </header>
+  <header id="top-header">
+    <div class="wrapper">
+      <h1 class="logo">Sahaya<span>hastham</span></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/coordinator">Dashboard</a></li>
+          <li><a href="../manageVolunteers/ManageVolunteersLastLast.html">volunteer</a></li>
+          <li><a href="/camprequest">Requests</a></li>
+          <li><a href="/addtask"></i>Task Assigning</a></li>
+          <li><a href="/campinventory"></i>Camp</a></li>
+          <li><a href="/people"></i>People</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="/home">Logout</a></li>
+        </ul>
+      </nav>
+
+      <div class="menu-toggle">
+        <div class="hamburger"></div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Camp Status -->
+  <div class="camp-status" id="camp-status">Active</div>
+
+  <div class="outer-div">
+    <div class="inner-div" id="camp-info">
+      <h2>Camp Information</h2>
+      <p><strong>Camp Name:</strong> <span id="camp-name">{{camp_name}}</span></p>
+      <p><strong>Camp Id:</strong><span id="camp-id">{{camp_id}}</span></p>
+      <p><strong>Coordinator Name:</strong> <span id="coordinator-name">{{name}}</span></p>
+      <p><strong>Total People:</strong> <span id="camp-total-people">{{total_people}}</span></p>
+      <p><strong>Total Volunteers:</strong> <span id="total-volunteers">{{total_volunteers}}</span></p>
+      <p><strong>Occupancy:</strong> <span id="occupancy-percent">{{occupancy_percent}}%</span></p>
+      <div id="occupancy-indicator" class="occupancy">Status</div>
+    </div>
+
+    <div class="inner-div">
+      <h2>Summary</h2>
+      <div class="summary-cards">
+        <div class="summary-card">
+          <p>Total People in Camp</p>
+          <span id="summary-total-people">{{total_people}}</span>
+        </div>
+        <div class="summary-card">
+          <p>Total Tasks</p>
+          <span id="total-tasks">{{total_tasks}}</span>
+        </div>
+        <div class="summary-card">
+          <p>Task Pending: <span id="summary-pending-tasks">{{pending_tasks}}</span></p>
+          <p>Task Completed: <span id="summary-completed-tasks">{{completed_tasks}}</span></p>
+        </div>
+        <div class="summary-card">
+          <p>Total Supply Requests</p>
+          <span id="total-supply-requests">0</span>
+        </div>
+        <div class="summary-card">
+          <p>Requests Approved: <span id="summary-approved-requests">0</span></p>
+          <p>Requests Rejected: <span id="summary-rejected-requests">0</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard">
+    <!-- Gender Ratio -->
+    <div class="card">
+      <h2>Gender Ratio</h2>
+      <div class="chart-container">
+        <canvas id="genderChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Age Distribution -->
+    <div class="card">
+      <h2>Age Distribution</h2>
+      <div class="chart-container">
+        <canvas id="ageChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Health Status -->
+    <div class="card">
+      <h2>Health Status</h2>
+      <div class="chart-container">
+        <canvas id="healthChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Task Management -->
+    <div class="card">
+      <h2>Task Management</h2>
+      <div class="chart-container">
+        <canvas id="taskChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    const campName = "{{camp_name}}"
+
+    // Calculate Statistics
+    const calculateStatistics = () => {
+      const totalPeople = campData.people.length;
+      const totalVolunteers = campData.volunteers.length;
+      const totalTasks = campData.tasks.length;
+      const pendingTasks = campData.tasks.filter(task => task.status === "Pending").length;
+      const completedTasks = totalTasks - pendingTasks;
+
+      const genderCounts = campData.people.reduce((acc, person) => {
+        acc[person.gender] = (acc[person.gender] || 0) + 1;
+        return acc;
+      }, {});
+
+      const ageCounts = campData.people.reduce((acc, person) => {
+        const ageGroup = person.age < 18 ? "below 18" : person.age < 35 ? "19-34" : person.age < 60 ? "35-59" : "above 60";
+        acc[ageGroup] = (acc[ageGroup] || 0) + 1;
+        return acc;
+      }, {});
+
+      const healthCounts = campData.people.reduce((acc, person) => {
+        acc[person.healthStatus] = (acc[person.healthStatus] || 0) + 1;
+        return acc;
+      }, {});
+
+      return {
+        totalPeople,
+        totalVolunteers,
+        totalTasks,
+        pendingTasks,
+        completedTasks,
+        genderCounts,
+        ageCounts,
+        healthCounts
+      };
+    };
+
+    function fetchCampData() {
+      fetch('/loadcoordinator/')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.error) {
+            console.error('Error:', data.error);
+            alert(data.error);  // Display error message to the user
+            return;
+          }
+
+          const context = data.context;
+          console.log("Camp Data:", context);
+
+          // Update Camp Information
+          document.getElementById("camp-name").textContent = " " + context.camp_name;
+          document.getElementById("camp-id").textContent = " " + context.camp_id;
+          document.getElementById("coordinator-name").textContent = context.name;
+          document.getElementById("camp-total-people").textContent = context.total_people;
+          document.getElementById("total-volunteers").textContent = context.total_volunteers;
+          document.getElementById("occupancy-percent").textContent = `${context.occupancy_percent}%`;
+
+          // Update Occupancy Indicator
+          const indicator = document.getElementById("occupancy-indicator");
+          if (context.occupancy_percent <= 50) {
+            indicator.style.background = "green";
+            indicator.textContent = "Good - Green";
+          } else if (context.occupancy_percent <= 75) {
+            indicator.style.background = "orange";
+            indicator.textContent = "Moderate - Orange";
+          } else if (context.occupancy_percent < 100) {
+            indicator.style.background = "red";
+            indicator.textContent = "Almost Full - Red";
+          } else {
+            indicator.style.background = "darkred";
+            indicator.textContent = "Overfilled - Dark Red";
+          }
+
+          // Update Summary
+          document.getElementById("summary-total-people").textContent = context.total_people;
+          document.getElementById("total-tasks").textContent = context.total_tasks;
+          document.getElementById("summary-pending-tasks").textContent = context.pending_tasks;
+          document.getElementById("summary-completed-tasks").textContent = context.completed_tasks;
+
+          // Update Charts
+          updateCharts(context);
+        })
+        .catch(error => {
+          console.error('Error fetching camp data:', error);
+          alert('An error occurred while fetching camp data. Please try again.');  // Display error message to the user
+        });
+    }
+
+    function updateCharts(context) {
+      // Gender Ratio Chart
+      const genderCounts = context.volunteers.reduce((acc, volunteer) => {
+        acc[volunteer.gender] = (acc[volunteer.gender] || 0) + 1;
+        return acc;
+      }, {});
+
+      new Chart(document.getElementById("genderChart"), {
+        type: 'pie',
+        data: {
+          labels: Object.keys(genderCounts),
+          datasets: [{
+            data: Object.values(genderCounts),
+            backgroundColor: ['#007bff', '#ff6384', '#4bc0c0']
+          }]
+        }
+      });
+
+      // Age Distribution Chart
+      const ageCounts = context.volunteers.reduce((acc, volunteer) => {
+        const ageGroup = volunteer.age < 18 ? "below 18" : volunteer.age < 35 ? "19-34" : volunteer.age < 60 ? "35-59" : "above 60";
+        acc[ageGroup] = (acc[ageGroup] || 0) + 1;
+        return acc;
+      }, {});
+
+      new Chart(document.getElementById("ageChart"), {
+        type: 'bar',
+        data: {
+          labels: Object.keys(ageCounts),
+          datasets: [{
+            data: Object.values(ageCounts),
+            backgroundColor: ['#36a2eb', '#ffce56', '#4bc0c0', '#ff9f40']
+          }]
+        }
+      });
+
+      // Task Management Chart
+      new Chart(document.getElementById("taskChart"), {
+        type: 'bar',
+        data: {
+          labels: ['Total Tasks', 'Pending', 'Completed'],
+          datasets: [{
+            data: [context.total_tasks, context.pending_tasks, context.completed_tasks],
+            backgroundColor: ['#36a2eb', '#ff6384', '#4bc0c0']
+          }]
+        }
+      });
+    }
+
+    // Call fetchCampData when the page loads
+    document.addEventListener('DOMContentLoaded', fetchCampData);
+
+  </script>
+
+  <div class="footer">&copy; 2025 Government Services. All Rights Reserved.</div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.menu-toggle').click(function () {
+        $('.main-nav').toggleClass('main-nav-open');
+        $(this).toggleClass('open');
+      });
+    });
+  </script>
+</body>
+
+</html>

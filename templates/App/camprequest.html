@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Camp Requests Dashboard - Coordinator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .wrapper {
+      width: 95%;
+      margin: 0 auto;
+    }
+
+    header {
+      background: #05124e;
+      color: #ebebd3;
+      position: relative;
+      padding: 1em 0;
+    }
+
+    header::after {
+      content: "";
+      clear: both;
+      display: block;
+    }
+
+    .logo {
+      float: left;
+      font-size: 1rem;
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .logo span {
+      font-weight: 400;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      background: #464655;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.5s ease-in-out;
+    }
+
+    .main-nav-open {
+      height: auto;
+    }
+
+    .main-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-nav li {
+      border-bottom: 1px solid #575766;
+    }
+
+    .main-nav li:last-child {
+      border-bottom: none;
+    }
+
+    .main-nav a {
+      color: white;
+      display: block;
+      padding: 1em 1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .main-nav a:hover,
+    .main-nav a:focus {
+      background: #e4b363;
+      color: #464655;
+    }
+
+    .menu-toggle {
+      padding: 1em;
+      position: absolute;
+      top: 0.5em;
+      right: 0.2em;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hamburger,
+    .hamburger::before,
+    .hamburger::after {
+      content: "";
+      display: block;
+      background: #ebebd3;
+      height: 3px;
+      width: 30px;
+      transition: all ease-in-out 500ms;
+    }
+
+    .hamburger::before {
+      transform: translateY(-6px);
+    }
+
+    .hamburger::after {
+      transform: translateY(3px);
+    }
+
+    .open .hamburger {
+      transform: rotate(45deg);
+    }
+
+    .open .hamburger::before {
+      opacity: 0;
+    }
+
+    .open .hamburger::after {
+      transform: rotate(90deg) translateY(3px);
+    }
+
+    .header1 {
+      background: #003366;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #003366;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .filter-search-container {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-search-left {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .filter-search-container select,
+    .filter-search-container input {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    .add-request-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .add-request-btn:hover {
+      background: #218838;
+    }
+
+    .requests-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .request-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .request-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .request-card h3 {
+      margin: 0 0 10px;
+      color: #003366;
+    }
+
+    .request-card p {
+      margin: 5px 0;
+      font-size: 0.9em;
+    }
+
+    .view-btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .view-btn:hover {
+      background: #0056b3;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #dc3545;
+    }
+
+    .modal-row {
+      margin: 10px 0;
+    }
+
+    .modal-row label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .modal-row input,
+    .modal-row textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .reply-btn,
+    .send-reply-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .reply-btn:hover,
+    .send-reply-btn:hover {
+      background: #218838;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 15px;
+      background: #002855;
+      color: white;
+      margin-top: 20px;
+    }
+
+    @media only screen and (min-width: 700px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      .main-nav {
+        height: auto;
+        position: relative;
+        background: transparent;
+        float: right;
+      }
+
+      .main-nav li {
+        display: inline-block;
+        border: none;
+      }
+
+      .main-nav a {
+        padding: 0;
+        margin-left: 2em;
+      }
+
+      .main-nav a:hover,
+      .main-nav a:focus {
+        background: transparent;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header1">
+    <img src="/static/ksdma2.jpg" alt="Government Logo" height="50"
+      style="vertical-align: middle; border-radius: 100%; margin-left: 3%;">
+    Disaster Relief Portal - Coordinator
+  </header>
+  <header id="top-header">
+    <div class="wrapper">
+      <h1 class="logo">Sahaya<span>hastham</span></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/coordinator">Dashboard</a></li>
+          <li><a href="../manageVolunteers/ManageVolunteersLastLast.html">Volunteer</a></li>
+          <li><a href="/camprequest">Request</a></li>
+          <li><a href="/addtask">Task Assigning</a></li>
+          <li><a href="/campinventory">Camp</a></li>
+          <li><a href="/people">People</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="/home">Logout</a></li>
+        </ul>
+      </nav>
+      <div class="menu-toggle">
+        <div class="hamburger"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <h1>All Camp Supply Requests - Coordinator</h1>
+    <div class="filter-search-container">
+      <div class="filter-search-left">
+        <select id="category-filter">
+          <option value="All">All Categories</option>
+          <option value="Food and Water">Food and Water</option>
+          <option value="Medical Supplies">Medical Supplies</option>
+          <option value="Sanitation">Sanitation</option>
+          <option value="Others">Others</option>
+        </select>
+        <input type="text" id="item-search" placeholder="Search by Item...">
+      </div>
+      <button class="add-request-btn" onclick="window.location.href='/addrequest'">Add Request</button>
+    </div>
+    <div class="requests-container" id="requests-container"></div>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close">×</span>
+      <div id="modal-content-text"></div>
+      <button id="reply-btn" class="reply-btn">Reply</button>
+      <div id="reply-form" style="display: none;">
+        <div class="modal-row">
+          <label for="quantity-available">Quantity Available:</label>
+          <input type="number" id="quantity-available" min="0" required>
+        </div>
+        <div class="modal-row">
+          <label for="reply-description">Reply Description:</label>
+          <textarea id="reply-description" rows="3" required></textarea>
+        </div>
+        <div class="modal-row">
+          <label for="contact-number">Contact Number:</label>
+          <input type="tel" id="contact-number" pattern="\+?[0-9]{10,12}" required>
+        </div>
+        <div class="modal-row">
+          <label for="email">Email:</label>
+          <input type="email" id="email" required>
+        </div>
+        <button id="send-reply-btn" class="send-reply-btn">Send Reply</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    © 2025 Government Services. All Rights Reserved.
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.menu-toggle').click(function () {
+        $('.main-nav').toggleClass('main-nav-open');
+        $(this).toggleClass('open');
+      });
+    });
+
+    const coordinatorInfo = {
+      coordinatorId: "COORD001",
+      campId: "CAMP123",
+      coordinatorName: "John Doe"
+    };
+
+    let allRequests = [];
+
+    async function fetchRequests() {
+            try {
+                const response = await fetch("/get-requests/");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch requests");
+                }
+                const data = await response.json();
+                allRequests = data.reqlist; // Ensure the response has `itemsList`
+                console.log(allRequests);
+                displayRequests(allRequests);
+                //await displayRequests(requests);
+            } catch (error) {
+                console.error("Error fetching requests:", error);
+                alert("An error occurred while fetching requests. Please try again later.");
+            }
+        }
+    fetchRequests();
+    let currentRequestId = null;
+
+    function displayRequests(requests) {
+      const container = document.getElementById('requests-container');
+      container.innerHTML = '';
+
+      requests.forEach(request => {
+        const card = document.createElement('div');
+        card.className = 'request-card';
+        card.innerHTML = `
+          <h3>${request.itemName}</h3>
+          <p>Category: ${request.category}</p>
+          <p>Quantity: ${request.quantity}</p>
+          <p>Time: ${request.time}</p>
+          <p>Camp: ${request.campaddress}</p>
+          <p>${request.itemDesc.substring(0, 50)}...</p>
+          <button class="view-btn" onclick="viewRequest('${request.requestId}')">View Details</button>
+        `;
+        container.appendChild(card);
+      });
+    }
+    displayRequests(allRequests);
+
+    function filterAndSearchRequests() {
+      const categoryFilter = document.getElementById('category-filter').value;
+      const itemSearch = document.getElementById('item-search').value.toLowerCase();
+
+      let filteredRequests = [...allRequests];
+
+      if (categoryFilter !== 'All') {
+        filteredRequests = filteredRequests.filter(request => request.category === categoryFilter);
+      }
+
+      if (itemSearch) {
+        filteredRequests = filteredRequests.filter(request => request.itemName.toLowerCase().includes(itemSearch));
+      }
+
+      displayRequests(filteredRequests);
+    }
+
+    filterAndSearchRequests();
+
+    function viewRequest(reqid) {
+      const request = allRequests.find(r => r.requestId === reqid);
+      if (!request) return;
+
+      currentRequestId = reqid;
+      const modal = document.getElementById('modal');
+      const content = document.getElementById('modal-content-text');
+      const replyBtn = document.getElementById('reply-btn');
+      const replyForm = document.getElementById('reply-form');
+
+      content.innerHTML = `
+        <div class="modal-row">
+          <label>Category:</label>
+          <p>${request.category}</p>
+        </div>
+        <div class="modal-row">
+          <label>Item Name:</label>
+          <p>${request.itemName}</p>
+        </div>
+        <div class="modal-row">
+          <label>Quantity Needed:</label>
+          <p>${request.quantity}</p>
+        </div>
+        <div class="modal-row">
+          <label>Time of Request:</label>
+          <p>${request.time}</p>
+        </div>
+        <div class="modal-row">
+          <label>Camp Address:</label>
+          <p>${request.campaddress}</p>
+        </div>
+        <div class="modal-row">
+          <label>Full Description:</label>
+          <p>${request.itemDesc}</p>
+        </div>
+        <div class="modal-row">
+          <label>Coordinator:</label>
+          <p>${request.coordinator_name} (${request.email})</p>
+        </div>
+        ${request.replyDetails ? `
+          <div class="modal-row">
+            <label>Reply Details:</label>
+            <p>
+              Responder Type: ${request.replyDetails.responderType}<br>
+              ${request.replyDetails.responderType === "Coordinator" ?
+            `Camp ID: ${request.replyDetails.campId}<br>Coordinator ID: ${request.replyDetails.coordinatorId}<br>` :
+            ""}
+              Name: ${request.replyDetails.coordinatorName}<br>
+              Quantity Available: ${request.replyDetails.quantityAvailable}<br>
+              Description: ${request.replyDetails.description}<br>
+              Phone: ${request.replyDetails.phone}<br>
+              Email: ${request.replyDetails.email}<br>
+              Reply Time: ${request.replyDetails.replyTime}
+            </p>
+          </div>` : ""}
+      `;
+
+      replyBtn.style.display = request.status === 'Waiting for Reply' ? 'block' : 'none';
+      replyForm.style.display = 'none';
+      modal.style.display = 'flex';
+    }
+
+    document.getElementById('reply-btn').addEventListener('click', () => {
+      document.getElementById('reply-btn').style.display = 'none';
+      document.getElementById('reply-form').style.display = 'block';
+    });
+
+    document.getElementById('send-reply-btn').addEventListener('click', () => {
+      const quantityAvailable = document.getElementById('quantity-available').value;
+      const replyDescription = document.getElementById('reply-description').value;
+      const contactNumber = document.getElementById('contact-number').value;
+      const email = document.getElementById('email').value;
+
+      if (!quantityAvailable || !replyDescription || !contactNumber || !email) {
+        alert('Please fill all reply fields.');
+        return;
+      }
+
+      if (!contactNumber.match(/\+?[0-9]{10,12}/)) {
+        alert('Please enter a valid phone number (10-12 digits).');
+        return;
+      }
+
+      if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+        alert('Please enter a valid email address.');
+        return;
+      }
+
+      const request = allRequests.find(r => r.id === currentRequestId);
+      if (request) {
+        request.status = 'Replied';
+        request.replyDetails = {
+          responderType: "Coordinator",
+          campId: coordinatorInfo.campId,
+          coordinatorId: coordinatorInfo.coordinatorId,
+          coordinatorName: coordinatorInfo.coordinatorName,
+          quantityAvailable: parseInt(quantityAvailable),
+          description: replyDescription,
+          phone: contactNumber,
+          email: email,
+          replyTime: new Date().toISOString().slice(0, 16).replace('T', ' ')
+        };
+
+        // Display all details in console
+        console.log("Coordinator Reply Details:");
+        console.log("Request ID:", request.id);
+        console.log("Item:", request.item);
+        console.log("Category:", request.category);
+        console.log("Original Quantity Needed:", request.quantity);
+        console.log("Camp Address:", request.campAddress);
+        console.log("Request Description:", request.description);
+        console.log("Request Time:", request.time);
+        console.log("Responder Type:", request.replyDetails.responderType);
+        console.log("Camp ID:", request.replyDetails.campId);
+        console.log("Coordinator ID:", request.replyDetails.coordinatorId);
+        console.log("Coordinator Name:", request.replyDetails.coordinatorName);
+        console.log("Quantity Available:", request.replyDetails.quantityAvailable);
+        console.log("Reply Description:", request.replyDetails.description);
+        console.log("Contact Phone:", request.replyDetails.phone);
+        console.log("Contact Email:", request.replyDetails.email);
+        console.log("Reply Time:", request.replyDetails.replyTime);
+        console.log("----------------------------------------");
+
+        alert('Reply sent successfully!');
+        closeModal();
+        filterAndSearchRequests();
+      }
+    });
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+      document.getElementById('reply-form').style.display = 'none';
+      document.getElementById('reply-btn').style.display = 'block';
+      document.getElementById('quantity-available').value = '';
+      document.getElementById('reply-description').value = '';
+      document.getElementById('contact-number').value = '';
+      document.getElementById('email').value = '';
+    }
+
+    document.querySelector('.close').addEventListener('click', closeModal);
+
+    window.addEventListener('click', (event) => {
+      if (event.target === document.getElementById('modal')) {
+        closeModal();
+      }
+    });
+
+    document.getElementById('category-filter').addEventListener('change', filterAndSearchRequests);
+    document.getElementById('item-search').addEventListener('input', filterAndSearchRequests);
+
+    filterAndSearchRequests();
+  </script>
+</body>
+
+</html>

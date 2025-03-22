@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Coordinator Dashboard</title>
+  <style>
+    .wrapper {
+      width: 95%;
+      /*max-width: 1000px;*/
+      margin: 0 auto;
+    }
+
+    header {
+      background: #05124e;
+      color: #ebebd3;
+      position: relative;
+      padding: 1em 0;
+    }
+
+    header::after {
+      content: "";
+      clear: both;
+      display: block;
+    }
+
+    .logo {
+      float: left;
+      font-size: 1rem;
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .logo span {
+      font-weight: 400;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      background: #464655;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.5s ease-in-out;
+    }
+
+    .main-nav-open {
+      height: auto;
+    }
+
+    .main-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-nav li {
+      border-bottom: 1px solid #575766;
+    }
+
+    .main-nav li:last-child {
+      border-bottom: none;
+    }
+
+    .main-nav a {
+      color: white;
+      display: block;
+      padding: 1em 1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .main-nav a:hover,
+    .main-nav a:focus {
+      background: #e4b363;
+      color: #464655;
+    }
+
+    .nav-icon {
+      display: inline-block;
+      font-size: 1.3em;
+      margin-right: .5em;
+      text-align: center;
+      width: 1.1em;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .menu-toggle {
+      padding: 1em;
+      position: absolute;
+      top: 0.5em;
+      right: 0.2em;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hamburger,
+    .hamburger::before,
+    .hamburger::after {
+      content: "";
+      display: block;
+      background: #ebebd3;
+      height: 3px;
+      width: 30px;
+      transition: all ease-in-out 500ms;
+    }
+
+    .hamburger::before {
+      transform: translateY(-6px);
+    }
+
+    .hamburger::after {
+      transform: translateY(3px);
+    }
+
+    .open .hamburger {
+      transform: rotate(45deg);
+    }
+
+    .open .hamburger::before {
+      opacity: 0;
+    }
+
+    .open .hamburger::after {
+      transform: rotate(90deg) translateY(3px);
+    }
+
+    @media only screen and (min-width: 700px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      .main-nav {
+        height: auto;
+        position: relative;
+        background: transparent;
+        float: right;
+      }
+
+      .main-nav li {
+        display: inline-block;
+        border: none;
+      }
+
+      .main-nav a {
+        padding: 0;
+        margin-left: 2em;
+      }
+
+      .main-nav a:hover,
+      .main-nav a:focus {
+        background: transparent;
+      }
+
+      .nav-icon {
+        display: none;
+      }
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-image: url(./img/blue1.jpg);
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background: #002855;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 10px;
+      background: #002855;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .Disaster-Relief-Portal {
+      background: #003366;
+    }
+
+    .header1 {
+      background: #003366;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #003366;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      resize: vertical;
+    }
+
+    .dropdown {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .dropdown label {
+      display: block;
+      margin: 5px 0;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #taskList {
+      margin-top: 20px;
+    }
+
+    .task-item {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background-color: #f9f9f9;
+      position: relative;
+    }
+
+    .task-item button {
+      margin-left: 10px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .task-item .edit-btn {
+      background-color: #28a745;
+      color: #fff;
+    }
+
+    .task-item .delete-btn {
+      background-color: #dc3545;
+      color: #fff;
+    }
+
+    .task-item .status-btn {
+      background-color: #ffc107;
+      color: #000;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header1">
+    <img src="/static/ksdma2.jpg" alt="Government Logo" height="50"
+      style="vertical-align: middle; border-radius: 100%; margin-right: 3%;"> Disaster Relief Portal
+  </header>
+  <header id="top-header">
+    <div class="wrapper">
+      <h1 class="logo">Sahaya<span>hastham</span></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/coordinator">Dashboard</a></li>
+          <li><a href="/volunteerlogin88">volunteer</a></li>
+          <li><a href="/camprequest">Requests</a></li>
+          <li><a href="/addtask"></i>Task Assigning</a></li>
+          <li><a href="/campinventory"></i>Camp</a></li>
+          <li><a href="/people"></i>People</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="/home">Logout</a></li>
+        </ul>
+      </nav>
+
+      <div class="menu-toggle">
+        <div class="hamburger"></div>
+      </div>
+
+    </div>
+  </header>
+
+
+
+  <div class="container">
+    <h1>Disaster Relief Camp Task Manager</h1>
+    <div id="content">
+      <!-- Default content for assigning volunteer tasks -->
+      <div class="form-group">
+        <label for="task">Task Description:</label>
+        <textarea id="task" rows="4" placeholder="Enter task description"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Select Volunteers:</label>
+        <div id="volunteerDropdown" class="dropdown">
+          <!-- Volunteer options will be populated here -->
+        </div>
+      </div>
+      <div class="buttons">
+        <button id="addBtn">Add Task</button>
+        <button id="toggleBtn">Switch to Supply Task</button>
+      </div>
+    </div>
+    <div id="taskList"></div>
+  </div>
+
+  <script>
+    // Sample volunteer data
+    // const volunteers = [
+    //   { id: 1, name: "John Doe", gender: "Male", age: 21 },
+    //   { id: 2, name: "Jane Smith", gender: "Female", age: 22 },
+    //   { id: 3, name: "Alice Johnson", gender: "Female", age: 35 },
+    //   { id: 4, name: "Bob Brown", gender: "Male", age: 44 },
+    //   { id: 5, name: "Charlie Davis", gender: "Male", age: 18 },
+    //   { id: 6, name: "Diana Evans", gender: "Female", age: 33 },
+    //   { id: 7, name: "Ethan Garcia", gender: "Male", age: 37 },
+    //   { id: 8, name: "Fiona Harris", gender: "Female", age: 23 },
+    //   { id: 9, name: "George Clark", gender: "Male", age: 24 },
+    //   { id: 10, name: "Hannah Lewis", gender: "Female", age: 40 }
+    // ];
+
+    // Task list array
+    let tasks = [];
+    let volunteerLs = [];
+
+    // Populate the dropdown with volunteer data
+    const volunteerDropdown = document.getElementById("volunteerDropdown");
+
+    async function populateVolunteerDropdown() {
+
+      await fetch("/get-volunteers/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ campName: "campName" }),
+      })
+        .then(response => response.json())
+        .then(data => {
+          volunteerLs = data.volunteerls;
+        })
+        .catch(error => {
+          console.error("Error:", error);
+        });
+      volunteerDropdown.innerHTML = ""; // Clear existing options
+      volunteerLs.forEach(volunteer => {
+        name = volunteer.first_name + " " + volunteer.last_name
+        const label = document.createElement("label");
+        label.innerHTML = `
+        <input type="checkbox" value="${volunteer.userId}">
+        UserId:${volunteer.userId} - ${name} - ${volunteer.gender} - ${volunteer.age}
+      `;
+        volunteerDropdown.appendChild(label);
+      });
+    }
+
+    // Initial population of volunteer dropdown
+    populateVolunteerDropdown();
+
+    // Add Task
+    async function addTaskHandler() {
+      const taskDescription = document.getElementById("task").value;
+      const selectedVolunteers = Array.from(document.querySelectorAll("#volunteerDropdown input:checked"))
+        .map(checkbox => checkbox.value);
+
+      if (taskDescription && selectedVolunteers.length > 0) {
+        selectedVolunteers.forEach(userId => {
+          //   const task = {
+          //     id: Date.now(),
+          //     description: taskDescription,
+          //     volunteerId: volunteerId,
+          //     status: "Pending"
+          //   };
+          let type = "onSite";
+          let requestBody = {
+            desc: taskDescription,
+            userid: userId,
+            type: type
+          };
+
+          // Add address and time for supply tasks
+          if (toggleBtn.textContent === "Switch to Assign Task") {
+            address = document.getElementById("address").value;
+            time = document.getElementById("time").value;
+            console.log("Condition oK");
+            let type = "supply"
+            requestBody = {
+              desc: taskDescription,
+              userid: userId,
+              type: type,
+              address: address,
+              time: time
+            };
+            // task.address = address;
+            // task.time = time;
+          };
+          fetch("/insert-task/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            //body: JSON.stringify({ desc:taskDescription,userid:userId,address:address,time:time,type:type }),  // Correctly pass the taskId
+            body: JSON.stringify(requestBody),
+          })
+            .then(response => {
+              if (!response.ok) {
+                throw new Error("Failed to insert task ");
+              }
+              return response.json();
+            })
+            .then(data => {
+              console.log("Task status inserted successfully:", data);
+            })
+            .catch(error => {
+              console.error("Error inserting task:", error);
+              alert("Failed to insert task. Please try again later.");
+            });
+
+          //tasks.push(task);
+        });
+        //displayTasks();
+        document.getElementById("task").value = ""; // Clear input
+        document.getElementById("address").value = ""; // Clear address (if exists)
+        document.getElementById("time").value = ""; // Clear time (if exists)
+        document.querySelectorAll("#volunteerDropdown input:checked").forEach(checkbox => checkbox.checked = false); // Uncheck all
+      } else {
+        alert("Please enter a task description and select at least one volunteer.");
+      }
+    }
+
+    document.getElementById("addBtn").addEventListener("click", addTaskHandler);
+
+    // Display Tasks
+    function displayTasks() {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      tasks.forEach((task, index) => {
+        const volunteer = volunteers.find(v => v.id == task.volunteerId);
+        const taskItem = document.createElement("div");
+        taskItem.className = "task-item";
+        taskItem.innerHTML = `
+        <p><strong>Task:</strong> ${task.description}</p>
+        ${task.address ? `<p><strong>Address:</strong> ${task.address}</p>` : ""}
+        ${task.time ? `<p><strong>Time of Collection:</strong> ${task.time}</p>` : ""}
+        <p><strong>Assigned Volunteer:</strong> ${volunteer ? volunteer.name : "Unknown Volunteer"}</p>
+        <p><strong>Status:</strong> <span class="status">${task.status}</span></p>
+        <button class="edit-btn" onclick="editTask(${index})">Edit</button>
+        <button class="delete-btn" onclick="deleteTask(${index})">Delete</button>
+        <button class="status-btn" onclick="toggleStatus(${index})">Mark as ${task.status === "Pending" ? "Completed" : "Pending"}</button>
+      `;
+        taskList.appendChild(taskItem);
+      });
+    }
+
+    // Toggle between assign volunteer tasks and supply tasks
+    const toggleBtn = document.getElementById("toggleBtn");
+    const contentDiv = document.getElementById("content");
+
+    function toggleView() {
+      if (toggleBtn.textContent === "Switch to Supply Task") {
+        // Switch to supply task view
+        contentDiv.innerHTML = `
+        <div class="form-group">
+          <label for="task">Task Description:</label>
+          <textarea id="task" rows="4" placeholder="Enter task description" style="width: 97%;"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="address">Collection Address:</label>
+          <input type="text" id="address" placeholder="Enter address where the item is situated" style="height: 30px; width: 100%;">
+        </div>
+        <div class="form-group">
+          <label for="time">Time of Collection:</label>
+          <input type="time" id="time" style="width: 100%;">
+        </div>
+        <div class="form-group">
+          <label>Select Volunteers:</label>
+          <div id="volunteerDropdown" class="dropdown">
+            ${volunteerDropdown.innerHTML}
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="addBtn">Add Task</button>
+          <button id="toggleBtn">Switch to Assign Task</button>
+        </div>
+      `;
+        toggleBtn.textContent = "Switch to Assign Task";
+      } else {
+        // Switch back to assign volunteer tasks view
+        contentDiv.innerHTML = `
+        <div class="form-group">
+          <label for="task">Task Description:</label>
+          <textarea id="task" rows="4" placeholder="Enter task description"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Select Volunteers:</label>
+          <div id="volunteerDropdown" class="dropdown">
+            ${volunteerDropdown.innerHTML}
+          </div>
+        </div>
+        <div class="buttons">
+          <button id="addBtn">Add Task</button>
+          <button id="toggleBtn">Switch to Supply Task</button>
+        </div>
+      `;
+        toggleBtn.textContent = "Switch to Supply Task";
+      }
+
+      // Reattach event listeners after switching views
+      document.getElementById("addBtn").addEventListener("click", addTaskHandler);
+      document.getElementById("toggleBtn").addEventListener("click", toggleView); // Reattach toggleBtn listener
+    }
+
+    // Initial event listener
+    toggleBtn.addEventListener("click", toggleView);
+
+    // Task management functions
+    function editTask(index) {
+      const task = tasks[index];
+      const newDescription = prompt("Edit task description:", task.description);
+      if (newDescription !== null) {
+        task.description = newDescription;
+        displayTasks();
+      }
+    }
+
+    function deleteTask(index) {
+      if (confirm("Are you sure you want to delete this task?")) {
+        tasks.splice(index, 1);
+        displayTasks();
+      }
+    }
+
+    function toggleStatus(index) {
+      const task = tasks[index];
+      task.status = task.status === "Pending" ? "Completed" : "Pending";
+      displayTasks();
+    }
+  </script>
+  <div class="footer">&copy; 2025 Government Services. All Rights Reserved.</div>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+    $(document).ready(function () {
+      $('.menu-toggle').click(function () {
+        $('.main-nav').toggleClass('main-nav-open');
+        $(this).toggleClass('open');
+      });
+    });
+
+  </script>
+</body>
+
+</html>

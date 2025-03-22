@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Item Requesting Dashboard</title>
+    <style>
+        .wrapper {
+            width: 95%;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #05124e;
+            color: #ebebd3;
+            position: relative;
+            padding: 1em 0;
+        }
+
+        header::after {
+            content: "";
+            clear: both;
+            display: block;
+        }
+
+        .logo {
+            float: left;
+            font-size: 1rem;
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .logo span {
+            font-weight: 400;
+        }
+
+        .main-nav {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: 0;
+            background: #464655;
+            height: 0;
+            overflow: hidden;
+            transition: height 0.5s ease-in-out;
+        }
+
+        .main-nav-open {
+            height: auto;
+        }
+
+        .main-nav ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .main-nav li {
+            border-bottom: 1px solid #575766;
+        }
+
+        .main-nav a {
+            color: white;
+            display: block;
+            padding: 1em 1em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .main-nav a:hover,
+        .main-nav a:focus {
+            background: #e4b363;
+            color: #464655;
+        }
+
+        .menu-toggle {
+            padding: 1em;
+            position: absolute;
+            top: 0.5em;
+            right: 0.2em;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger,
+        .hamburger::before,
+        .hamburger::after {
+            content: "";
+            display: block;
+            background: #ebebd3;
+            height: 3px;
+            width: 30px;
+            transition: all ease-in-out 500ms;
+        }
+
+        .hamburger::before {
+            transform: translateY(-6px);
+        }
+
+        .hamburger::after {
+            transform: translateY(3px);
+        }
+
+        .open .hamburger {
+            transform: rotate(45deg);
+        }
+
+        .open .hamburger::before {
+            opacity: 0;
+        }
+
+        .open .hamburger::after {
+            transform: rotate(90deg) translateY(3px);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header1 {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .container-req-supply {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #003366;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .back-button {
+            padding: 8px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .form-group-req-supply {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .form-row label {
+            width: 100px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-row input,
+        .form-row select {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            min-width: 0;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .buttons-req-supply {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        #request-table-req-supply {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        #request-table-req-supply th,
+        #request-table-req-supply td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        #request-table-req-supply th {
+            background-color: #003366;
+            color: white;
+            white-space: nowrap;
+        }
+
+        #request-table-req-supply td {
+            white-space: nowrap;
+        }
+
+        #request-table-req-supply tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .view-btn-req-supply {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px 10px;
+        }
+
+        .edit-btn-req-supply {
+            background-color: #ffc107;
+            color: #fff;
+            padding: 5px 10px;
+        }
+
+        .delete-btn-req-supply {
+            background-color: #dc3545;
+            color: #fff;
+            padding: 5px 10px;
+        }
+
+        .filter-search-req-supply {
+            display: flex;
+            margin-bottom: 15px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-search-req-supply .filter-div,
+        .filter-search-req-supply .category-div,
+        .filter-search-req-supply .search-div {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .filter-search-req-supply label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        select,
+        .filter-search-req-supply input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background: #002855;
+            color: white;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        .modal-req-supply {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content-req-supply {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-req-supply {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #dc3545;
+        }
+
+        @media only screen and (max-width: 700px) {
+            .header1 {
+                flex-direction: column;
+                font-size: 1rem;
+            }
+
+            .header1 img {
+                margin-bottom: 10px;
+            }
+
+            .main-nav li {
+                text-align: center;
+            }
+
+            .form-row label {
+                width: 100%;
+            }
+
+            .form-row input,
+            .form-row select {
+                width: 100%;
+            }
+
+            .buttons-req-supply button {
+                width: 100%;
+            }
+
+            .filter-search-req-supply {
+                flex-direction: column;
+            }
+
+            .filter-search-req-supply .filter-div,
+            .filter-search-req-supply .category-div,
+            .filter-search-req-supply .search-div {
+                width: 100%;
+            }
+
+            .header-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media only screen and (min-width: 700px) {
+            .menu-toggle {
+                display: none;
+            }
+
+            .main-nav {
+                height: auto;
+                position: relative;
+                background: transparent;
+                float: right;
+            }
+
+            .main-nav li {
+                display: inline-block;
+                border: none;
+            }
+
+            .main-nav a {
+                padding: 0;
+                margin-left: 2em;
+            }
+
+            .filter-search-req-supply {
+                flex-wrap: nowrap;
+            }
+
+            .filter-search-req-supply .filter-div,
+            .filter-search-req-supply .category-div,
+            .filter-search-req-supply .search-div {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header1">
+        <img src="/static/ksdma2.jpg" alt="Government Logo" height="50"
+            style="vertical-align: middle; border-radius: 100%; margin-left: 3%;">
+        Disaster Relief Portal - Coordinator
+    </header>
+    <header id="top-header">
+        <div class="wrapper">
+            <h1 class="logo">Sahaya<span>hastham</span></h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/coordinator">Dashboard</a></li>
+                    <li><a href="../manageVolunteers/ManageVolunteersLastLast.html">Volunteer</a></li>
+                    <li><a href="/camprequest">Requests</a></li>
+                    <li><a href="/addtask">Task Assigning</a></li>
+                    <li><a href="/campinventory">Camp</a></li>
+                    <li><a href="/people">People</a></li>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="/home">Logout</a></li>
+                </ul>
+            </nav>
+            <div class="menu-toggle">
+                <div class="hamburger"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-req-supply">
+        <div class="header-container">
+            <h1>Request Supplies for Relief Camp</h1>
+            <a href="/camprequest"><button class="back-button">Go Back to Requests</button></a>
+        </div>
+        <div id="request-form-req-supply">
+            <div class="form-group-req-supply">
+                <div class="form-row">
+                    <label for="category-req-supply">Category:</label>
+                    <select id="category-req-supply">
+                        <option value="Food and Water">Food and Water</option>
+                        <option value="Medical Supplies">Medical Supplies</option>
+                        <option value="Sanitation">Sanitation</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="item-name-req-supply">Item Name:</label>
+                    <input type="text" id="item-name-req-supply" placeholder="Enter item name">
+                </div>
+                <div class="form-row">
+                    <label for="item-quantity-req-supply">Quantity:</label>
+                    <input type="number" id="item-quantity-req-supply" placeholder="Enter quantity" min="1">
+                </div>
+                <label for="item-description-req-supply">Description:</label>
+                <textarea id="item-description-req-supply" placeholder="Enter item description" rows="3"></textarea>
+            </div>
+            <div class="buttons-req-supply">
+                <button id="send-req-supply">Send Request</button>
+            </div>
+        </div>
+
+        <div class="filter-search-req-supply">
+            <div class="filter-div">
+                <label for="filter-status-req-supply">Filter by Status:</label>
+                <select id="filter-status-req-supply">
+                    <option value="all">All</option>
+                    <option value="Waiting for Reply">Waiting for Reply</option>
+                    <option value="Replied">Replied</option>
+                </select>
+            </div>
+            <div class="category-div">
+                <label for="filter-category-req-supply">Filter by Category:</label>
+                <select id="filter-category-req-supply">
+                    <option value="all">All</option>
+                    <option value="Food and Water">Food and Water</option>
+                    <option value="Medical Supplies">Medical Supplies</option>
+                    <option value="Sanitation">Sanitation</option>
+                    <option value="Others">Others</option>
+                </select>
+            </div>
+            <div class="search-div">
+                <label for="search-item-req-supply">Search by Item:</label>
+                <input type="text" id="search-item-req-supply" placeholder="Enter item name">
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="request-table-req-supply">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Status</th>
+                        <th>Reply Type</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="request-table-body-req-supply"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for Viewing Details -->
+    <div id="modal-req-supply" class="modal-req-supply">
+        <div class="modal-content-req-supply">
+            <span class="close-req-supply">×</span>
+            <div id="modal-content-text-req-supply"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Editing Requests -->
+    <div id="edit-modal-req-supply" class="modal-req-supply">
+        <div class="modal-content-req-supply">
+            <span class="close-edit-req-supply">×</span>
+            <h2>Edit Request</h2>
+            <div class="form-group-req-supply">
+                <div class="form-row">
+                    <label for="edit-category-req-supply">Category:</label>
+                    <select id="edit-category-req-supply">
+                        <option value="Food and Water">Food and Water</option>
+                        <option value="Medical Supplies">Medical Supplies</option>
+                        <option value="Sanitation">Sanitation</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label for="edit-item-name-req-supply">Item Name:</label>
+                    <input type="text" id="edit-item-name-req-supply" placeholder="Enter item name">
+                </div>
+                <div class="form-row">
+                    <label for="edit-item-quantity-req-supply">Quantity:</label>
+                    <input type="number" id="edit-item-quantity-req-supply" placeholder="Enter quantity" min="1">
+                </div>
+                <label for="edit-item-description-req-supply">Description:</label>
+                <textarea id="edit-item-description-req-supply" placeholder="Enter item description "
+                    rows="3"></textarea>
+            </div>
+            <button id="save-edit-req-supply">Save Changes</button>
+        </div>
+    </div>
+
+    <div class="footer">© 2025 Government Services. All Rights Reserved.</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.menu-toggle').click(function () {
+                $('.main-nav').toggleClass('main-nav-open');
+                $(this).toggleClass('open');
+            });
+        });
+
+
+        let currentEditId = null;
+        let requests = [];
+
+        function displayRequests(filteredRequests = requests) {
+            const requestTableBody = document.getElementById("request-table-body-req-supply");
+            requestTableBody.innerHTML = "";
+            filteredRequests.forEach(request => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+          <td>${request.category}</td>
+          <td>${request.itemName}</td>
+          <td>${request.quantity}</td>
+          <td>${request.status}</td>
+          <td>${request.replyDetails ? request.replyDetails.responderType : "N/A"}</td>
+          <td>
+            <button class="view-btn-req-supply" onclick="viewDetails('${request.requestId}')">View</button>
+            <button class="edit-btn-req-supply" onclick="openEditModal('${request.requestId}')">Edit</button>
+            <button class="delete-btn-req-supply" onclick="deleteRequest('${request.requestId}')">Delete</button>
+          </td>
+        `;
+                requestTableBody.appendChild(row);
+            });
+        }
+
+        function openEditModal(reqid) {
+            const request = requests.find(r => r.requestId === reqid);
+            if (request) {
+                if (request.status === "Replied") {
+                    alert("Replied items cannot be edited.");
+                    return;
+                }
+                currentEditId = reqid;
+                document.getElementById("edit-category-req-supply").value = request.category;
+                document.getElementById("edit-item-name-req-supply").value = request.itemName;
+                document.getElementById("edit-item-quantity-req-supply").value = request.quantity;
+                document.getElementById("edit-item-description-req-supply").value = request.itemDesc;
+                document.getElementById("edit-modal-req-supply").style.display = "flex";
+            }
+        }
+
+        async function addRequest(newRequest) {
+            try {
+                const response = await fetch("/insert-request/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(newRequest),
+                });
+                fetchRequests();
+                //itemModal.style.display = "none";
+            } catch (error) {
+                console.error("Error adding request:", error);
+                alert("An error occurred while adding the request. Please try again.");
+            }
+        }
+
+        async function fetchRequests() {
+            try {
+                const response = await fetch("/get-requests/");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch requests");
+                }
+                const data = await response.json();
+                requests = data.reqlist; // Ensure the response has `itemsList`
+                await displayRequests(requests);
+            } catch (error) {
+                console.error("Error fetching requests:", error);
+                alert("An error occurred while fetching requests. Please try again later.");
+            }
+        }
+        fetchRequests();
+        async function saveEditedRequest() {
+            const category = document.getElementById("edit-category-req-supply").value;
+            const itemName = document.getElementById("edit-item-name-req-supply").value;
+            const quantity = document.getElementById("edit-item-quantity-req-supply").value;
+            const description = document.getElementById("edit-item-description-req-supply").value;
+
+            if (itemName && quantity) {
+                const request = requests.find(r => r.requestId === currentEditId);
+                if (request) {
+                    request.category = category;
+                    request.item = itemName;
+                    request.quantity = parseInt(quantity);
+                    request.description = description;
+
+                    let requestData={
+                        requestId:currentEditId,
+                        category:category,
+                        itemName:itemName,
+                        quantity:parseInt(quantity),
+                        itemDesc:description
+                    };
+                    try {
+                        // Include itemId in the request body
+                        //const requestData = { ...itemData, itemId };
+
+                        const response = await fetch(`/update-request/`, {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify(requestData),
+                        });
+
+                        if (response.ok) {
+                            const updatedRequest = await response.json();
+                            // itemList = itemList.map((item) =>
+                            //   item.itemId === itemId ? updatedItem : item
+                            // ); // Update the item in the list
+                            //displayInventory();
+                            //itemModal.style.display = "none";
+                        } else {
+                            console.error("Failed to update request");
+                            alert("Failed to update request. Please try again.");
+                        }
+                    } catch (error) {
+                        console.error("Error updating request:", error);
+                        alert("An error occurred while updating the request. Please try again.");
+                    }
+
+
+                    fetchRequests();
+                    closeEditModal();
+                }
+            } else {
+                alert("Please enter item name and quantity.");
+            }
+        }
+
+        function closeEditModal() {
+            document.getElementById("edit-modal-req-supply").style.display = "none";
+        }
+
+        document.getElementById("save-edit-req-supply").addEventListener("click", saveEditedRequest);
+        document.querySelector(".close-edit-req-supply").addEventListener("click", closeEditModal);
+
+        function viewDetails(id) {
+            const request = requests.find(r => r.requestId === id);
+            if (request) {
+                const modal = document.getElementById("modal-req-supply");
+                const modalContent = document.getElementById("modal-content-text-req-supply");
+                let html = `
+          <div class="modal-row">
+            <label>Category:</label>
+            <p>${request.category}</p>
+          </div>
+          <div class="modal-row">
+            <label>Item Name:</label>
+            <p>${request.item}</p>
+          </div>
+          <div class="modal-row">
+            <label>Quantity Needed:</label>
+            <p>${request.quantity}</p>
+          </div>
+          <div class="modal-row">
+            <label>Time of Request:</label>
+            <p>${request.time}</p>
+          </div>
+          <div class="modal-row">
+            <label>Camp Address:</label>
+            <p>${request.campaddress}</p>
+          </div>
+          <div class="modal-row">
+            <label>Description:</label>
+            <p>${request.itemDesc}</p>
+          </div>
+          <div class="modal-row">
+            <label>Status:</label>
+            <p>${request.status}</p>
+          </div>
+        `;
+
+                if (request.status === "Replied" && request.replyDetails) {
+                    html += `
+            <div class="coordinator-heading">Reply Details</div>
+            <div class="modal-row">
+              <label>Reply Type:</label>
+              <p>${request.replyDetails.responderType}</p>
+            </div>
+            <div class="modal-row">
+              <label>Name:</label>
+              <p>${request.replyDetails.coordinatorName}</p>
+            </div>
+            ${request.replyDetails.responderType === "Coordinator" ? `
+              <div class="modal-row">
+                <label>Camp ID:</label>
+                <p>${request.replyDetails.campId}</p>
+              </div>
+              <div class="modal-row">
+                <label>Coordinator ID:</label>
+                <p>${request.replyDetails.coordinatorId}</p>
+              </div>
+            ` : ""}
+            <div class="modal-row">
+              <label>Quantity Available:</label>
+              <p>${request.replyDetails.quantityAvailable}</p>
+            </div>
+            <div class="modal-row">
+              <label>Reply Description:</label>
+              <p>${request.replyDetails.description}</p>
+            </div>
+            <div class="modal-row">
+              <label>Phone:</label>
+              <p>${request.replyDetails.phone}</p>
+            </div>
+            <div class="modal-row">
+              <label>Email:</label>
+              <p>${request.replyDetails.email}</p>
+            </div>
+            <div class="modal-row">
+              <label>Reply Time:</label>
+              <p>${request.replyDetails.replyTime}</p>
+            </div>
+          `;
+                }
+
+                modalContent.innerHTML = html;
+                modal.style.display = "flex";
+            }
+        }
+
+        document.getElementById("send-req-supply").addEventListener("click", () => {
+            const category = document.getElementById("category-req-supply").value;
+            const itemName = document.getElementById("item-name-req-supply").value;
+            const quantity = document.getElementById("item-quantity-req-supply").value;
+            const description = document.getElementById("item-description-req-supply").value;
+
+            if (itemName && quantity) {
+                //const currentTime = new Date().toISOString().slice(0, 16).replace("T", " ");
+                const newRequest = {
+                    //id: Date.now() + Math.floor(Math.random() * 1000),
+                    //campId: campDetails.campId,
+                    //campAddress: campDetails.campAddress,
+                    category: category,
+                    itemName: itemName,
+                    quantity: parseInt(quantity),
+                    itemDesc: description,
+                    status: "Waiting for Reply",
+                    //coordinatorName: campDetails.coordinatorName,
+                    //email: campDetails.email,
+                    //phone: campDetails.phone
+                };
+                //requests.push(newRequest);
+                addRequest(newRequest);
+                document.getElementById("item-name-req-supply").value = "";
+                document.getElementById("item-quantity-req-supply").value = "";
+                document.getElementById("item-description-req-supply").value = "";
+                displayRequests();
+            } else {
+                alert("Please enter item name and quantity.");
+            }
+        });
+
+        document.getElementById("filter-status-req-supply").addEventListener("change", filterRequests);
+        document.getElementById("filter-category-req-supply").addEventListener("change", filterRequests);
+        document.getElementById("search-item-req-supply").addEventListener("input", filterRequests);
+
+        function filterRequests() {
+            const status = document.getElementById("filter-status-req-supply").value;
+            const category = document.getElementById("filter-category-req-supply").value;
+            const searchTerm = document.getElementById("search-item-req-supply").value.toLowerCase();
+
+            let filteredRequests = requests;
+
+            if (status !== "all") {
+                filteredRequests = filteredRequests.filter(request => request.status === status);
+            }
+
+            if (category !== "all") {
+                filteredRequests = filteredRequests.filter(request => request.category === category);
+            }
+
+            if (searchTerm) {
+                filteredRequests = filteredRequests.filter(request => request.itemName.toLowerCase().includes(searchTerm));
+            }
+
+            displayRequests(filteredRequests);
+        }
+
+        async function deleteRequest(reqId) {
+            const request = requests.find(r => r.requestId === reqId);
+            if (request.status === "Replied") {
+                alert("Replied requests cannot be deleted.");
+                return;
+            }
+            if (confirm("Are you sure you want to delete this request?")) {
+                // requests = requests.filter(request => request.id !== requestId);
+                // displayRequests();
+                try {
+                    const response = await fetch(`/delete-request/`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ "requestId": reqId }), // Include itemId in the request body
+                    });
+
+                    if (response.ok) {
+                        // itemList = itemList.filter((item) => item.itemId !== itemId); // Remove the item from the list
+                        // displayInventory();
+                        fetchRequests();
+                    } else {
+                        console.error("Failed to delete request");
+                        alert("Failed to delete request. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Error deleting request:", error);
+                    alert("An error occurred while deleting the request. Please try again.");
+                }
+            }
+
+        }
+
+        const modal = document.getElementById("modal-req-supply");
+        const closeBtn = document.getElementsByClassName("close-req-supply")[0];
+        closeBtn.onclick = function () {
+            modal.style.display = "none";
+        };
+
+        window.onclick = function (event) {
+            const editModal = document.getElementById("edit-modal-req-supply");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+            if (event.target == editModal) {
+                editModal.style.display = "none";
+            }
+        };
+
+        displayRequests();
+    </script>
+</body>
+
+</html>

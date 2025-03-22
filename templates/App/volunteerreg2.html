@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Signup</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f4f4f4;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .signup {
+      width: 40%;
+      max-width: 500px;
+      padding: 3rem;
+      background-color: #fff;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+    }
+
+    .form-title-signUp {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-container-signUp {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .input-container-signUp input {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .submit-signUp {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.2rem;
+      background-color: #4F46E5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .submit-signUp:hover {
+      background-color: #3b39d1;
+    }
+
+    .login-link-signUp {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    .login-link-signUp a {
+      color: #4F46E5;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .login-link-signUp a:hover {
+      text-decoration: underline;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+      text-align: left;
+      padding-left: 0.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .signup {
+        width: 70%;
+      }
+
+      .form-title-signUp {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .signup {
+        width: 90%;
+        padding: 2rem;
+      }
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    .suggestions {
+      display: none;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-top: 0.2rem;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .suggestion-item {
+      padding: 0.5rem;
+      cursor: pointer;
+      background-color: #f9f9f9;
+    }
+
+    .suggestion-item:hover {
+      background-color: #e9e9e9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="signup">
+      <p class="form-title-signUp">Create an Account</p>
+      <form action="/volunteerreg" method="post">
+        {% csrf_token %}
+        <div class="input-container-signUp">
+          <input type="text" id="firstName" name="fname" placeholder="First Name" required aria-label="First Name">
+          <div class="error" id="firstNameError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="text" id="lastName" name="lname" placeholder="Last Name" required aria-label="Last Name">
+          <div class="error" id="lastNameError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="date" id="dob" name="dob" required aria-label="Date of Birth">
+          <div class="error" id="dobError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <select id="gender" name="gender" aria-label="Gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Others">Others</option>
+          </select>
+        </div>
+        <div class="input-container-signUp">
+          <input type="email" id="email" name="email" placeholder="Email" required aria-label="Email">
+          <div class="error" id="emailError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="password" id="password" name="pass1" placeholder="Password" required aria-label="Password">
+          <div class="error" id="passwordError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="password" id="confirmPassword" name="pass2" placeholder="Confirm Password" required aria-label="Confirm Password">
+          <div class="error" id="confirmPasswordError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="tel" id="phone" name="ph" placeholder="Phone Number" required aria-label="Phone Number">
+          <div class="error" id="phoneError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="text" id="address" name="addr" placeholder="Address" required aria-label="Address">
+        </div>
+        <div class="input-container-signUp">
+          <input type="text" id="place" name="place" placeholder="Place" required aria-label="Place">
+        </div>
+        <div class="input-container-signUp">
+          <select id="district" name="district" aria-label="District">
+            <option value="">Select District</option>
+            <!-- Populate dynamically -->
+          </select>
+        </div>
+        <div class="input-container-signUp">
+          <select id="state" name="state" aria-label="State">
+            <option value="">Select State</option>
+            <option value="Kerala">Kerala</option>
+          </select>
+        </div>
+        <div class="input-container-signUp">
+          <input type="text" id="pincode" name="pincode" placeholder="Pincode" required aria-label="Pincode">
+          <div class="error" id="pincodeError"></div>
+        </div>
+        <div class="input-container-signUp">
+          <input type="text" id="campSearch" name="campName" placeholder="Search Relief Camp" aria-label="Search Relief Camp">
+          <div class="suggestions" id="campSuggestions"></div>
+        </div>
+        <button type="submit" class="submit-signUp" id="signUpButton">Create</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Fetch districts from API
+      fetch("/get-districts/")
+        .then(response => response.json())
+        .then(data => {
+          let districtDropdown = document.getElementById("district");
+          data.districts.forEach(district => {
+            let option = document.createElement("option");
+            option.value = district.name;
+            option.textContent = district.name;
+            districtDropdown.appendChild(option);
+          });
+        })
+        .catch(error => console.error("Error fetching districts:", error));
+
+      // Fetch camps data
+      let camps1 = [];
+      fetch("/get-camps/")
+        .then(response => response.json())
+        .then(data => {
+          camps1 = data.camps;
+
+          const campSearch = document.getElementById("campSearch");
+          const suggestionBox = document.getElementById("campSuggestions");
+
+          campSearch.addEventListener("input", function () {
+            let query = campSearch.value.toLowerCase();
+            suggestionBox.innerHTML = "";
+
+            if (query.length > 0) {
+              let filteredCamps = camps1.filter(camp =>
+                camp.name.toLowerCase().includes(query)
+              );
+
+              if (filteredCamps.length > 0) {
+                filteredCamps.forEach(camp => {
+                  let suggestionItem = document.createElement("div");
+                  suggestionItem.classList.add("suggestion-item");
+                  suggestionItem.textContent = camp.name;
+
+                  suggestionItem.addEventListener("click", function () {
+                    campSearch.value = camp.name;
+                    suggestionBox.innerHTML = "";
+                  });
+
+                  suggestionBox.appendChild(suggestionItem);
+                });
+
+                suggestionBox.style.display = "block";
+              } else {
+                suggestionBox.style.display = "none";
+              }
+            } else {
+              suggestionBox.style.display = "none";
+            }
+          });
+        })
+        .catch(error => console.error("Error fetching camps:", error));
+
+      // Form validation
+      document.getElementById("signUpButton").addEventListener("click", function (e) {
+        e.preventDefault();
+        document.querySelectorAll(".error").forEach(el => el.textContent = "");
+
+        let firstName = document.getElementById("firstName").value.trim();
+        let lastName = document.getElementById("lastName").value.trim();
+        let dob = document.getElementById("dob").value;
+        let email = document.getElementById("email").value.trim();
+        let password = document.getElementById("password").value;
+        let confirmPassword = document.getElementById("confirmPassword").value;
+        let phone = document.getElementById("phone").value.trim();
+        let pincode = document.getElementById("pincode").value.trim();
+        let isValid = true;
+
+        // Validate first name
+        if (!firstName) {
+          document.getElementById("firstNameError").textContent = "First name is required.";
+          isValid = false;
+        } else if (/\d/.test(firstName)) {
+          document.getElementById("firstNameError").textContent = "First name cannot contain numbers.";
+          isValid = false;
+        }
+
+        // Validate last name
+        if (!lastName) {
+          document.getElementById("lastNameError").textContent = "Last name is required.";
+          isValid = false;
+        } else if (/\d/.test(lastName)) {
+          document.getElementById("lastNameError").textContent = "Last name cannot contain numbers.";
+          isValid = false;
+        }
+
+        // Validate date of birth
+        if (!dob) {
+          document.getElementById("dobError").textContent = "Date of birth is required.";
+          isValid = false;
+        }
+
+        // Validate email
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+          document.getElementById("emailError").textContent = "Enter a valid email address.";
+          isValid = false;
+        }
+
+        // Validate password
+        if (password.length < 6) {
+          document.getElementById("passwordError").textContent = "Password must be at least 6 characters long.";
+          isValid = false;
+        } else if (!/[A-Za-z]/.test(password) || !/\d/.test(password)) {
+          document.getElementById("passwordError").textContent = "Password must include at least one letter and one number.";
+          isValid = false;
+        }
+
+        // Validate confirm password
+        if (password !== confirmPassword) {
+          document.getElementById("confirmPasswordError").textContent = "Passwords do not match.";
+          isValid = false;
+        }
+
+        // Validate phone number
+        if (!/^\d{10}$/.test(phone)) {
+          document.getElementById("phoneError").textContent = "Enter a valid 10-digit phone number.";
+          isValid = false;
+        }
+
+        // Validate pincode
+        if (!/^\d{6}$/.test(pincode)) {
+          document.getElementById("pincodeError").textContent = "Enter a valid 6-digit pincode.";
+          isValid = false;
+        }
+
+        // If all validations pass, proceed with account creation
+        if (isValid) {
+          document.querySelector("form").submit();
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

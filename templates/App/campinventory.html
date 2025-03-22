@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Coordinator Dashboard</title>
+  <style>
+    .wrapper {
+      width: 95%;
+      /*max-width: 1000px;*/
+      margin: 0 auto;
+    }
+
+    header {
+      background: #05124e;
+      color: #ebebd3;
+      position: relative;
+      padding: 1em 0;
+    }
+
+    header::after {
+      content: "";
+      clear: both;
+      display: block;
+    }
+
+    .logo {
+      float: left;
+      font-size: 1rem;
+      margin: 0;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .logo span {
+      font-weight: 400;
+    }
+
+    .main-nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      left: 0;
+      background: #464655;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.5s ease-in-out;
+    }
+
+    .main-nav-open {
+      height: auto;
+    }
+
+    .main-nav ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .main-nav li {
+      border-bottom: 1px solid #575766;
+    }
+
+    .main-nav li:last-child {
+      border-bottom: none;
+    }
+
+    .main-nav a {
+      color: white;
+      display: block;
+      padding: 1em 1em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .main-nav a:hover,
+    .main-nav a:focus {
+      background: #e4b363;
+      color: #464655;
+    }
+
+    .nav-icon {
+      display: inline-block;
+      font-size: 1.3em;
+      margin-right: .5em;
+      text-align: center;
+      width: 1.1em;
+      color: rgba(255, 255, 255, 0.45);
+    }
+
+    .menu-toggle {
+      padding: 1em;
+      position: absolute;
+      top: 0.5em;
+      right: 0.2em;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .hamburger,
+    .hamburger::before,
+    .hamburger::after {
+      content: "";
+      display: block;
+      background: #ebebd3;
+      height: 3px;
+      width: 30px;
+      transition: all ease-in-out 500ms;
+    }
+
+    .hamburger::before {
+      transform: translateY(-6px);
+    }
+
+    .hamburger::after {
+      transform: translateY(3px);
+    }
+
+    .open .hamburger {
+      transform: rotate(45deg);
+    }
+
+    .open .hamburger::before {
+      opacity: 0;
+    }
+
+    .open .hamburger::after {
+      transform: rotate(90deg) translateY(3px);
+    }
+
+    @media only screen and (min-width: 700px) {
+      .menu-toggle {
+        display: none;
+      }
+
+      .main-nav {
+        height: auto;
+        position: relative;
+        background: transparent;
+        float: right;
+      }
+
+      .main-nav li {
+        display: inline-block;
+        border: none;
+      }
+
+      .main-nav a {
+        padding: 0;
+        margin-left: 2em;
+      }
+
+      .main-nav a:hover,
+      .main-nav a:focus {
+        background: transparent;
+      }
+
+      .nav-icon {
+        display: none;
+      }
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-image: url(./img/blue1.jpg);
+      margin: 0;
+      padding: 0;
+      background-color: #e6e6f0;
+    }
+
+    .header {
+      background: #002855;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 10px;
+      background: #002855;
+      color: white;
+      margin-top: 20px;
+    }
+
+    .Disaster-Relief-Portal {
+      background: #003366;
+    }
+
+    .header1 {
+      background: #003366;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .filter-dropdown {
+      margin-left: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-container input {
+      margin-left: 10px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      flex: 1;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      margin-top: 20px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 600px;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    td.actions {
+      white-space: nowrap;
+    }
+
+    td.actions button {
+      margin: 0 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      width: 50%;
+      border-radius: 8px;
+      position: relative;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    form label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    form input,
+    form select,
+    form textarea {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    form button {
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .error {
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
+    .view-modal-content {
+      text-align: left;
+    }
+
+    .view-modal-content p {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="header1">
+    <img src="/static/ksdma2.jpg" alt="Government Logo" height="50"
+      style="vertical-align: middle; border-radius: 100%; margin-right: 3%;"> Disaster Relief Portal
+  </header>
+  <header id="top-header">
+    <div class="wrapper">
+      <h1 class="logo">Sahaya<span>hastham</span></h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="/coordinator">Dashboard</a></li>
+          <li><a href="./donor.html">volunteer</a></li>
+          <li><a href="/camprequest">Requests</a></li>
+          <li><a href="/addtask"></i>Task Assigning</a></li>
+          <li><a href="/campinventory"></i>Camp</a></li>
+          <li><a href="/people"></i>People</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Logout</a></li>
+        </ul>
+      </nav>
+
+      <div class="menu-toggle">
+        <div class="hamburger"></div>
+      </div>
+
+    </div>
+  </header>
+
+
+
+
+
+  <div class="container">
+    <h1>Inventory Management</h1>
+    <div>
+      <button id="add-item-btn">Add Item</button>
+      <select id="sort-dropdown" class="filter-dropdown">
+        <option value="all">All Categories</option>
+        <option value="Food and Water">Food and Water</option>
+        <option value="Medical Supplies">Medical Supplies</option>
+        <option value="Sanitation">Sanitation</option>
+        <option value="Others">Others</option>
+      </select>
+      <div class="search-container">
+        <input type="text" id="search-input" placeholder="Search by item name...">
+      </div>
+    </div>
+
+
+
+    <div class="table-wrapper">
+      <table id="inventory-table">
+        <thead>
+          <tr>
+            <th>Item Name</th>
+            <th>Category</th>
+            <th>Quantity</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Add/Edit Item Modal -->
+    <div id="item-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">×</span>
+        <h2 id="modal-title">Add Item</h2>
+        <form id="item-form">
+          <label for="item-name">Item Name:</label>
+          <input type="text" id="item-name" required>
+          <span class="error" id="item-name-error"></span>
+
+          <label for="category">Category:</label>
+          <select id="category" required>
+            <option value="Food and Water">Food and Water</option>
+            <option value="Medical Supplies">Medical Supplies</option>
+            <option value="Sanitation">Sanitation</option>
+            <option value="Others">Others</option>
+          </select>
+
+          <label for="quantity">Quantity:</label>
+          <input type="number" id="quantity" min="1" required>
+          <span class="error" id="quantity-error"></span>
+
+          <label for="description">Description:</label>
+          <textarea id="description" rows="4"></textarea>
+
+          <button type="submit">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- View Item Modal -->
+    <div id="view-modal" class="modal">
+      <div class="modal-content view-modal-content">
+        <span class="close-modal">×</span>
+        <h2>Item Details</h2>
+        <p><strong>Name:</strong> <span id="view-name"></span></p>
+        <p><strong>Category:</strong> <span id="view-category"></span></p>
+        <p><strong>Quantity:</strong> <span id="view-quantity"></span></p>
+        <p><strong>Description:</strong> <span id="view-description"></span></p>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const tableBody = document.querySelector("#inventory-table tbody");
+      const addItemBtn = document.getElementById("add-item-btn");
+      const sortDropdown = document.getElementById("sort-dropdown");
+      const itemModal = document.getElementById("item-modal");
+      const viewModal = document.getElementById("view-modal");
+      const closeModalBtns = document.querySelectorAll(".close-modal");
+      const itemForm = document.getElementById("item-form");
+      const searchInput = document.getElementById("search-input");
+
+      let itemList = [];
+      let editingItemId = null;
+
+      // Fetch data from server
+      async function fetchData() {
+        try {
+          const response = await fetch("/get-inventory/");
+          if (!response.ok) {
+            throw new Error("Failed to fetch data");
+          }
+          const data = await response.json();
+          itemList = data.itemsList; // Ensure the response has `itemsList`
+          displayInventory(itemList); // Call displayInventory after fetching data
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          alert("An error occurred while fetching data. Please try again later.");
+        }
+      }
+
+      // Display inventory
+      function displayInventory(data = itemList) {
+        tableBody.innerHTML = ""; // Clear the table
+
+        if (!data || data.length === 0) {
+          // Display a message if no data is available
+          tableBody.innerHTML = `
+        <tr>
+          <td colspan="4" style="text-align: center;">No items found.</td>
+        </tr>
+      `;
+          return;
+        }
+
+        // Populate the table with data
+        data.forEach((item) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+        <td>${item.itemName}</td>
+        <td>${item.category}</td>
+        <td>${item.quantity}</td>
+        <td class="actions">
+          <button data-action="view" data-id="${item.itemId}">View</button>
+          <button data-action="edit" data-id="${item.itemId}">Edit</button>
+          <button data-action="delete" data-id="${item.itemId}">Delete</button>
+        </td>
+      `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Event delegation for buttons
+      tableBody.addEventListener("click", async (e) => {
+        const button = e.target.closest("button");
+        if (!button) return;
+
+        const action = button.dataset.action;
+        const itemId = button.dataset.id;
+
+        if (action === "view") viewItem(itemId);
+        if (action === "edit") await editItem(itemId);
+        if (action === "delete") deleteItem(itemId);
+      });
+
+      // View item
+      function viewItem(itemId) {
+        const item = itemList.find((item) => item.itemId === itemId);
+        if (item) {
+          document.getElementById("view-name").textContent = item.itemName;
+          document.getElementById("view-category").textContent = item.category;
+          document.getElementById("view-quantity").textContent = item.quantity;
+          document.getElementById("view-description").textContent = item.itemDesc;
+          viewModal.style.display = "flex";
+        }
+      }
+
+      // Edit item
+      async function editItem(itemId) {
+        const item = itemList.find((item) => item.itemId === itemId);
+        if (item) {
+          editingItemId = itemId;
+          document.getElementById("item-name").value = item.itemName;
+          document.getElementById("category").value = item.category;
+          document.getElementById("quantity").value = item.quantity;
+          document.getElementById("description").value = item.itemDesc;
+          document.getElementById("modal-title").textContent = "Edit Item";
+          itemModal.style.display = "flex";
+        }
+      }
+
+      // Add item
+      async function addItem(itemData) {
+        try {
+          const response = await fetch("/add-item/", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(itemData),
+          });
+          await fetchData();
+          itemModal.style.display = "none";
+        } catch (error) {
+          console.error("Error adding item:", error);
+          alert("An error occurred while adding the item. Please try again.");
+        }
+      }
+
+      // Update item
+      async function updateItem(itemId, itemData) {
+        try {
+          // Include itemId in the request body
+          const requestData = { ...itemData, itemId };
+
+          const response = await fetch(`/update-item/`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          if (response.ok) {
+            const updatedItem = await response.json();
+            itemList = itemList.map((item) =>
+              item.itemId === itemId ? updatedItem : item
+            ); // Update the item in the list
+            displayInventory();
+            itemModal.style.display = "none";
+          } else {
+            console.error("Failed to update item");
+            alert("Failed to update item. Please try again.");
+          }
+        } catch (error) {
+          console.error("Error updating item:", error);
+          alert("An error occurred while updating the item. Please try again.");
+        }
+      }
+
+      // Delete item
+      async function deleteItem(itemId) {
+        if (confirm("Are you sure you want to delete this item?")) {
+          try {
+            const response = await fetch(`/delete-item/`, {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ itemId }), // Include itemId in the request body
+            });
+
+            if (response.ok) {
+              itemList = itemList.filter((item) => item.itemId !== itemId); // Remove the item from the list
+              displayInventory();
+            } else {
+              console.error("Failed to delete item");
+              alert("Failed to delete item. Please try again.");
+            }
+          } catch (error) {
+            console.error("Error deleting item:", error);
+            alert("An error occurred while deleting the item. Please try again.");
+          }
+        }
+      }
+
+      // Add item
+      addItemBtn.addEventListener("click", () => {
+        editingItemId = null;
+        document.getElementById("modal-title").textContent = "Add Item";
+        itemForm.reset();
+        itemModal.style.display = "flex";
+      });
+
+      // Close modals
+      closeModalBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          itemModal.style.display = "none";
+          viewModal.style.display = "none";
+        });
+      });
+
+      // Filter and search
+      sortDropdown.addEventListener("change", filterAndSearch);
+      searchInput.addEventListener("input", filterAndSearch);
+
+      function filterAndSearch() {
+        const sortValue = sortDropdown.value;
+        const searchQuery = searchInput.value.trim().toLowerCase();
+
+        let filteredData = [...itemList];
+
+        if (sortValue !== "all") {
+          filteredData = filteredData.filter((item) => item.category === sortValue);
+        }
+
+        if (searchQuery) {
+          filteredData = filteredData.filter((item) =>
+            item.itemName.toLowerCase().includes(searchQuery)
+          );
+        }
+
+        displayInventory(filteredData);
+      }
+
+      // Form submission
+      itemForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        clearErrors();
+
+        const name = document.getElementById("item-name").value.trim();
+        const category = document.getElementById("category").value;
+        const quantity = parseInt(document.getElementById("quantity").value);
+        const description = document.getElementById("description").value.trim();
+
+        let isValid = true;
+
+        if (!validateName(name)) {
+          document.getElementById("item-name-error").textContent =
+            "Item name cannot contain numbers.";
+          isValid = false;
+        }
+
+        if (quantity < 1) {
+          document.getElementById("quantity-error").textContent =
+            "Quantity must be at least 1.";
+          isValid = false;
+        }
+
+        if (!isValid) return;
+
+        const itemData = {
+          itemName: name,
+          category,
+          quantity,
+          itemDesc: description,
+        };
+
+        if (editingItemId) {
+          await updateItem(editingItemId, itemData); // Update existing item
+        } else {
+          await addItem(itemData); // Add new item
+        }
+      });
+
+      // Validate name
+      function validateName(name) {
+        const namePattern = /^[A-Za-z\s-]+$/;
+        return namePattern.test(name);
+      }
+
+      // Clear errors
+      function clearErrors() {
+        document.querySelectorAll(".error").forEach((error) => {
+          error.textContent = "";
+        });
+      }
+
+      // Initial fetch
+      fetchData();
+    });
+  </script>
+
+
+
+
+
+  <div class="footer">&copy; 2025 Government Services. All Rights Reserved.</div>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+
+    $(document).ready(function () {
+      $('.menu-toggle').click(function () {
+        $('.main-nav').toggleClass('main-nav-open');
+        $(this).toggleClass('open');
+      });
+    });
+
+  </script>
+</body>
+
+</html>

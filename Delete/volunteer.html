@@ -1,0 +1,421 @@
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>volunteer Website</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Merriweather&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+
+        .container-volunteer {
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-btn-volunteer {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .status-btn-volunteer:hover {
+            background: #0056b3;
+        }
+
+        .Disaster-Relief-Portal {
+            background: #003366;
+        }
+
+        .header1 {
+            background: #003366;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .header {
+            background: #002855;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: center;
+            background: #003f88;
+            padding: 10px 0;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .navbar a:hover {
+            background: #0056b3;
+            border-radius: 5px;
+        }
+
+        .wrapper {
+            width: 95%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: #05124e;
+            color: #ebebd3;
+            position: relative;
+            padding: 1em 0;
+        }
+
+        header::after {
+            content: "";
+            clear: both;
+            display: block;
+        }
+
+        .logo {
+            float: left;
+            font-size: 1rem;
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .logo span {
+            font-weight: 400;
+        }
+
+        .main-nav {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            left: 0;
+            background: #464655;
+            height: 0;
+            overflow: hidden;
+            transition: height 0.5s ease-in-out;
+        }
+
+        .main-nav-open {
+            height: auto;
+        }
+
+        .main-nav ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .main-nav li {
+            border-bottom: 1px solid #575766;
+        }
+
+        .main-nav li:last-child {
+            border-bottom: none;
+        }
+
+        .main-nav a {
+            color: white;
+            display: block;
+            padding: 1em 1em;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .main-nav a:hover,
+        .main-nav a:focus {
+            background: #e4b363;
+            color: #464655;
+        }
+
+        .nav-icon {
+            display: inline-block;
+            font-size: 1.3em;
+            margin-right: .5em;
+            text-align: center;
+            width: 1.1em;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        .menu-toggle {
+            padding: 1em;
+            position: absolute;
+            top: 0.5em;
+            right: 0.2em;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hamburger,
+        .hamburger::before,
+        .hamburger::after {
+            content: "";
+            display: block;
+            background: #ebebd3;
+            height: 3px;
+            width: 30px;
+            transition: all ease-in-out 500ms;
+        }
+
+        .hamburger::before {
+            transform: translateY(-6px);
+        }
+
+        .hamburger::after {
+            transform: translateY(3px);
+        }
+
+        .open .hamburger {
+            transform: rotate(45deg);
+        }
+
+        .open .hamburger::before {
+            opacity: 0;
+        }
+
+        .open .hamburger::after {
+            transform: rotate(90deg) translateY(3px);
+        }
+
+        @media only screen and (min-width: 700px) {
+            .menu-toggle {
+                display: none;
+            }
+
+            .main-nav {
+                height: auto;
+                position: relative;
+                background: transparent;
+                float: right;
+            }
+
+            .main-nav li {
+                display: inline-block;
+                border: none;
+            }
+
+            .main-nav a {
+                padding: 0;
+                margin-left: 2em;
+            }
+
+            .main-nav a:hover,
+            .main-nav a:focus {
+                background: transparent;
+            }
+
+            .nav-icon {
+                display: none;
+            }
+        }
+
+
+        .footer1 {
+    background: #003366;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+    </style>
+</head>
+
+<body>
+    <header class="header1">
+        <img src="/static/ksdma2.jpg" alt="Government Logo" height="50"
+            style="vertical-align: middle; border-radius: 100%; margin-right: 3%;"> Disaster Relief Portal
+    </header>
+    <header id="top-header">
+        <div class="wrapper">
+            <h1 class="logo">Sahaya<span>hastham</span></h1>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="/home">Home</a></li>
+                    <li><a href="./donor.html">Donation</a></li>
+                    <li><a href="/Volunteerlogin">Volunteer</a></li>
+                    <li><a href="./signIn/loginAdmin.html"></i>Admin</a></li>
+                    <li><a href="./signIn/loginCoordinator.html"></i>Coordinator</a></li>
+                    <li><a href="./about.html"></i>About</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </nav>
+
+            <div class="menu-toggle">
+                <div class="hamburger"></div>
+            </div>
+
+        </div>
+    </header>
+
+
+
+    <div class="container-volunteer">
+        <h2>Volunteer Task Dashboard</h2>
+        <div class="volunteer-info-volunteer">
+            <p><strong>Name:</strong>{{name}}</p>
+            <p><strong>Volunteer ID:</strong>{{userid}}</p>
+            <p><strong>Role:</strong> Emergency Response Volunteer</p>
+        </div>
+        <div id="taskList-volunteer"></div>
+    </div>
+
+    <div class="footer1" style="width: 100%; margin: 0%;">&copy; 2025 Government of India - Disaster Relief Department
+    </div>
+
+    <script>
+        /*const tasks = [
+            { id: 1, description: "Assist at food distribution center", status: "Pending" },
+            { id: 2, description: "Coordinate medical supplies", status: "Pending" },
+            { id: 3, description: "Help with emergency response training", status: "Pending" }
+        ];*/
+        userId="{{userid}}";
+
+        let tasks1 = [];
+        
+        fetch("/get-tasks/")
+            .then(response => response.json())
+            .then(data =>{
+                tasks1 = data.taskls/*.filter(task => task.volunteerId ==="{{userid}}")*/;
+                renderTasks();
+            })
+/*
+        fetch(`/get-tasks/${userId}/`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then(data => {
+        // Filter tasks where volunteerId matches the logged-in user's userId
+            tasks1 = data.taskls;
+            renderTasks(); // Render the filtered tasks
+        })
+    .catch(error => {
+        console.error("Error fetching tasks:", error);
+        alert("Failed to fetch tasks. Please try again later.");
+    });*/
+        
+
+        function renderTasks() {
+            const taskList = document.getElementById("taskList-volunteer");
+            taskList.innerHTML = "";
+
+            tasks1.forEach(task => {
+                const taskDiv = document.createElement("div");
+                taskDiv.className = "task-volunteer p-3 border rounded my-2";
+                taskDiv.innerHTML = `
+                    <p><strong>Task:</strong> ${task.desc}</p>
+                    <p><strong>Status:</strong> <span id="status-${task.taskId}">${task.status}</span></p>
+                    <button class="status-btn-volunteer" onclick="updateStatus('${task.taskId}')">Mark as Completed</button>
+                `;
+                taskList.appendChild(taskDiv);
+            });
+
+            
+        }
+
+//     function updateStatus(taskId) {
+//     // Update the status on the webpage
+//     const statusElement = document.getElementById(`status-${taskId}`);
+//     if (statusElement) {
+//         statusElement.textContent = "Completed";
+//     }
+
+//     // Send a request to the backend to update the status in MongoDB
+//     fetch("/update-task-status/", {
+//         method: "POST",
+//         headers: {
+//             "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({taskID:taskId}),
+//     })
+//         .then(response => {
+//             /*if (!response.ok) {
+//                 throw new Error("Failed to update task status");
+//             }*/
+//             return response.json();
+//         })
+//         .then(data => {
+//             console.log("Task status updated successfully:", data);
+//         })
+//         .catch(error => {
+//             console.error("Error updating task status:", error);
+//             alert("Failed to update task status. Please try again later.");
+//             // Revert the status on the webpage if the update fails
+//             if (statusElement) {
+//                 statusElement.textContent = "Pending";
+//             }
+//         });
+// }
+
+function updateStatus(taskId) {
+    // Update the status on the webpage
+    const statusElement = document.getElementById(`status-${taskId}`);
+    if (statusElement) {
+        statusElement.textContent = "Completed";
+    }
+
+    // Send a request to the backend to update the status
+    fetch("/update-task-status/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ taskId: taskId }),  // Correctly pass the taskId
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update task status");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Task status updated successfully:", data);
+        })
+        .catch(error => {
+            console.error("Error updating task status:", error);
+            alert("Failed to update task status. Please try again later.");
+            // Revert the status on the webpage if the update fails
+            if (statusElement) {
+                statusElement.textContent = "Pending";
+            }
+        });
+}
+        renderTasks();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html> 

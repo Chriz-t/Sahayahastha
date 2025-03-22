@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Supply Tracking System</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700|Merriweather&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Supply Tracking Container */
+    .container-supply {
+      max-width: 700px;
+      margin: 30px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Progress Graph */
+    .progress-graph {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      margin: 20px 0;
+      padding: 10px 0;
+    }
+
+
+    /* Base Progress Line */
+    .progress-graph::before {
+      content: "";
+      position: absolute;
+      top: 15px;
+      left: 15%;
+      width: 70%;
+      height: 4px;
+      background: #ccc;
+      z-index: 1;
+    }
+
+    /* Supply Details */
+    .supply-details {
+      margin-bottom: 20px;
+    }
+
+    .supply-details p {
+      margin: 5px 0;
+    }
+
+
+
+
+
+    /* Dynamic Progress Line */
+    .progress-line-filled {
+      position: absolute;
+      top: 15px;
+      left: 15%;
+      height: 4px;
+      background: #28a745;
+      z-index: 2;
+      transition: width 0.4s ease-in-out;
+    }
+
+    /* Progress Step */
+    .progress-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Circle */
+    .circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 2;
+      position: relative;
+    }
+
+    /* Active & Completed Steps */
+    .progress-step.active .circle {
+      background: #007bff;
+    }
+
+    .progress-step.completed .circle {
+      background: #28a745;
+    }
+
+    /* Button Styling */
+    .status-btn-volunteer {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: block;
+      margin: 20px auto;
+    }
+
+    .status-btn-volunteer:hover {
+      background: #0056b3;
+    }
+/* stick footer to bottom */
+   
+
+    .footer {
+      background: #003366;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      position: relative;
+      bottom: 0;
+      width: 100%;
+      margin-top: auto;
+      /* Pushes footer to bottom */
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container-supply">
+    <h2>Supply Tracking System</h2>
+    <div class="supply-details">
+      <p><strong>Starting Address:</strong> <span id="startAddress"></span></p>
+      <p><strong>Time:</strong> <span id="startTime"></span></p>
+    </div>
+
+    <div class="progress-graph" id="progressGraph"></div>
+
+    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+      <button class="btn btn-primary" onclick="updateStatus()">Update Status</button>
+      <button class="btn btn-primary" onclick="window.location.href='a.html'">Back to Main</button>
+    </div>
+  </div>
+
+  <div class="footer">&copy; 2025 Government Services. All Rights Reserved.</div>
+  <!-- <script>
+    localStorage.clear();
+    // herrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrreeeeeeeeeeeeeeeeeee
+  </script> -->
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const taskId = urlParams.get('id');
+    const startAddress = urlParams.get('address');
+    const startTime = urlParams.get('time');
+
+    document.getElementById("startAddress").textContent = startAddress;
+    document.getElementById("startTime").textContent = startTime;
+
+    const steps = ["Pending", "Went for Pickup", "Item Collected", "Delivered"];
+
+    let currentIndex = parseInt(localStorage.getItem(`progressIndex_${taskId}`)) || 0;
+
+    function getTaskProgress() {
+      return localStorage.getItem(`task_progress_${taskId}`) || steps[0];
+    }
+
+    function setTaskProgress(status) {
+      localStorage.setItem(`task_progress_${taskId}`, status);
+    }
+
+    function renderProgressGraph() {
+      const currentStatus = getTaskProgress();
+      currentIndex = steps.indexOf(currentStatus);
+      const progressPercentage = (currentIndex / (steps.length - 1)) * 80;
+
+
+      document.getElementById("progressGraph").innerHTML = `
+            <div class="progress-line-filled" style="width: calc(${progressPercentage}% - 15px);"></div>
+            ${steps.map((step, index) => `
+                <div class="progress-step ${index === currentIndex ? "active" : index < currentIndex ? "completed" : ""}">
+                    <div class="circle">${index + 1}</div>
+                    <p>${step}</p>
+                </div>
+            `).join("")}
+        `;
+    }
+
+    function updateStatus() {
+      if (currentIndex < steps.length - 1) {
+        currentIndex++;
+        setTaskProgress(steps[currentIndex]);
+        localStorage.setItem(`progressIndex_${taskId}`, currentIndex);
+
+        renderProgressGraph();
+
+        if (steps[currentIndex] === "Delivered") {
+          localStorage.setItem(`task_status_${taskId}`, "Completed");
+          alert("Task completed successfully!");
+          window.location.href = "a.html"; // Redirect to update in a.html
+        } else {
+          localStorage.setItem(`task_status_${taskId}`, steps[currentIndex]);
+        }
+      }
+    }
+
+    renderProgressGraph();
+  </script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive Login</title>
+  <!-- <link rel="stylesheet" href="./signIn.css" /> -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-image: url("/static/blue.jpg");
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+    }
+
+    .login {
+      width: 40%;
+      max-width: 500px;
+      padding: 3rem;
+      background-color: #fff;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+    }
+
+    .form-title-signIn {
+      color: #3b39d1;
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-container-signIn {
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-container-signIn input {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.2rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .submit-signIn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.2rem;
+      background-color: #4F46E5;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 1rem;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .submit-signIn:hover {
+      background-color: #3b39d1;
+    }
+
+    .signup-link-signIn {
+      margin-top: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .signup-link-signIn a {
+      color: #4F46E5;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .signup-link-signIn a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 1024px) {
+      .login {
+        width: 50%;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .login {
+        width: 70%;
+      }
+
+      .form-title-signIn {
+        font-size: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login {
+        width: 90%;
+        padding: 2rem;
+      }
+
+      .form-title-signIn {
+        font-size: 1.3rem;
+      }
+
+      .input-container-signIn input,
+      .submit-signIn {
+        font-size: 1rem;
+      }
+
+      .signup-link-signIn {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="login">
+      <p class="form-title-signIn">Sign in to Coordinator account</p>
+      <div class="input-container-signIn">
+        <form action='/coordinatorlogin' method="post">
+          {% csrf_token %}
+          <input type="text" id="username" name="userId" placeholder="Enter Username">
+      </div>
+      <div class="input-container-signIn">
+        <input type="password" id="password" name="pass1" placeholder="Enter Password">
+      </div style="align-content:left;">
+
+      <div>
+        <p class="login-link-signUp">
+          <a href="#"><u>forgot password&quest;</u></a>
+        </p>
+      </div>
+
+      <button type="submit" class="submit-signIn" id="signInButton">
+        Login
+      </button>
+      <!-- <p class="signup-link-signIn">
+        Don't have an account? <a href="/volunteerreg">Register</a>
+      </p> -->
+      </form>
+    </div>
+
+  </div>
+
+
+</body>
+
+</html>
