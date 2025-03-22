@@ -142,9 +142,11 @@
         <form action='/coordinatorlogin' method="post">
           {% csrf_token %}
           <input type="text" id="username" name="userId" placeholder="Enter Username">
+          <div class="error" id="usererror"></div>
       </div>
       <div class="input-container-signIn">
         <input type="password" id="password" name="pass1" placeholder="Enter Password">
+        <div class="error" id="passerror"></div>
       </div style="align-content:left;">
 
       <div>
