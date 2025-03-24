@@ -707,8 +707,13 @@ def insert_request(request):
         return JsonResponse({"error": "Invalid request"}, status=400)
     
 def get_requests(request):
-    camp_id=request.session['camp_id']
+    camp_id=request.session.get('camp_id')
+    #request.session['camp_id']=camp_id
     reqLs=list(request_collection.find({"campId":camp_id},{"_id":0}))
+    return JsonResponse({"reqlist":reqLs})
+
+def get_all_requests(request):
+    reqLs=list(request_collection.find({},{"_id":0}))
     return JsonResponse({"reqlist":reqLs})
 
 @csrf_exempt
@@ -729,3 +734,29 @@ def update_request(request):
         updated_request = request_collection.find_one({"requestId": requestId}, {'_id': 0})
         return JsonResponse(updated_request)
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+@csrf_exempt
+def append_reply(request):
+    if request.method =="PUT":
+        data=json.loads(request.body)
+        requestId=data.get("requestId")
+        camp_id=request.session.get('camp_id')
+        cordata=coordinator_collection.find_one({"camp_id":camp_id})
+        name=" "+cordata['first_name']+" "+cordata['last_name']
+        rqdata=request_collection.find_one({"requestId":requestId})
+        replyData={
+            "responderType":data.get("responderType"),
+            "campId":camp_id,
+            "coordinator_name":name,
+            "coordinatorId":cordata['userId'],
+            "quantityAvailable":data.get("quantityAvailable"),
+            "replyDescription":data.get("replyDescription"),
+            "phone":data.get("phone"),
+            "emailId":data.get("emailId"),
+            "replyTime":datetime.now()
+        }
+        request_collection.update_one({"requestId": requestId}, {"$set":{"status":"Replied"},"$push":{"replyDetails":replyData}})
+        updated_request = request_collection.find_one({"requestId": requestId}, {'_id': 0})
+        return JsonResponse(updated_request)
+    return JsonResponse({"error": "Invalid request"}, status=400)
+    

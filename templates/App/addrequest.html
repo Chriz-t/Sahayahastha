@@ -592,7 +592,7 @@
           <td>${request.itemName}</td>
           <td>${request.quantity}</td>
           <td>${request.status}</td>
-          <td>${request.replyDetails ? request.replyDetails.responderType : "N/A"}</td>
+          <td>${request.replyDetails ? request.replyDetails[0].responderType : "N/A"}</td>
           <td>
             <button class="view-btn-req-supply" onclick="viewDetails('${request.requestId}')">View</button>
             <button class="edit-btn-req-supply" onclick="openEditModal('${request.requestId}')">Edit</button>
@@ -757,41 +757,41 @@
             <div class="coordinator-heading">Reply Details</div>
             <div class="modal-row">
               <label>Reply Type:</label>
-              <p>${request.replyDetails.responderType}</p>
+              <p>${request.replyDetails[0].responderType}</p>
             </div>
             <div class="modal-row">
               <label>Name:</label>
-              <p>${request.replyDetails.coordinatorName}</p>
+              <p>${request.replyDetails[0].coordinator_name}</p>
             </div>
-            ${request.replyDetails.responderType === "Coordinator" ? `
+            ${request.replyDetails[0].responderType === "Coordinator" ? `
               <div class="modal-row">
                 <label>Camp ID:</label>
-                <p>${request.replyDetails.campId}</p>
+                <p>${request.replyDetails[0].campId}</p>
               </div>
               <div class="modal-row">
                 <label>Coordinator ID:</label>
-                <p>${request.replyDetails.coordinatorId}</p>
+                <p>${request.replyDetails[0].coordinatorId}</p>
               </div>
             ` : ""}
             <div class="modal-row">
               <label>Quantity Available:</label>
-              <p>${request.replyDetails.quantityAvailable}</p>
+              <p>${request.replyDetails[0].quantityAvailable}</p>
             </div>
             <div class="modal-row">
               <label>Reply Description:</label>
-              <p>${request.replyDetails.description}</p>
+              <p>${request.replyDetails[0].replyDescription}</p>
             </div>
             <div class="modal-row">
               <label>Phone:</label>
-              <p>${request.replyDetails.phone}</p>
+              <p>${request.replyDetails[0].phone}</p>
             </div>
             <div class="modal-row">
               <label>Email:</label>
-              <p>${request.replyDetails.email}</p>
+              <p>${request.replyDetails[0].emailId}</p>
             </div>
             <div class="modal-row">
               <label>Reply Time:</label>
-              <p>${request.replyDetails.replyTime}</p>
+              <p>${request.replyDetails[0].replyTime}</p>
             </div>
           `;
                 }

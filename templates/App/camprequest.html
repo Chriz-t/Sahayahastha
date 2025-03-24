@@ -429,30 +429,24 @@
       });
     });
 
-    // const coordinatorInfo = {
-    //   coordinatorId: "COORD001",
-    //   campId: "CAMP123",
-    //   coordinatorName: "John Doe"
-    // };
-
     let allRequests = [];
 
     async function fetchRequests() {
-            try {
-                const response = await fetch("/get-requests/");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch requests");
-                }
-                const data = await response.json();
-                allRequests = data.reqlist; // Ensure the response has `itemsList`
-                console.log(allRequests);
-                displayRequests(allRequests);
-                //await displayRequests(requests);
-            } catch (error) {
-                console.error("Error fetching requests:", error);
-                alert("An error occurred while fetching requests. Please try again later.");
-            }
+      try {
+        const response = await fetch("/get-all-requests/");
+        if (!response.ok) {
+          throw new Error("Failed to fetch requests");
         }
+        const data = await response.json();
+        allRequests = data.reqlist; // Ensure the response has `itemsList`
+        console.log(allRequests);
+        displayRequests(allRequests);
+        //await displayRequests(requests);
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+        alert("An error occurred while fetching requests. Please try again later.");
+      }
+    }
     fetchRequests();
     let currentRequestId = null;
 
@@ -539,16 +533,16 @@
           <div class="modal-row">
             <label>Reply Details:</label>
             <p>
-              Responder Type: ${request.replyDetails.responderType}<br>
-              ${request.replyDetails.responderType === "Coordinator" ?
-            `Camp ID: ${request.replyDetails.campId}<br>Coordinator ID: ${request.replyDetails.coordinatorId}<br>` :
+              Responder Type: ${request.replyDetails[0].responderType}<br>
+              ${request.replyDetails[0].responderType === "Coordinator" ?
+            `Camp ID: ${request.replyDetails[0].campId}<br>Coordinator Id: ${request.replyDetails[0].coordinatorId}<br>` :
             ""}
-              Name: ${request.replyDetails.coordinatorName}<br>
-              Quantity Available: ${request.replyDetails.quantityAvailable}<br>
-              Description: ${request.replyDetails.description}<br>
-              Phone: ${request.replyDetails.phone}<br>
-              Email: ${request.replyDetails.email}<br>
-              Reply Time: ${request.replyDetails.replyTime}
+              Name: ${request.replyDetails[0].coordinator_name}<br>
+              Quantity Available: ${request.replyDetails[0].quantityAvailable}<br>
+              Description: ${request.replyDetails[0].replyDescription}<br>
+              Phone: ${request.replyDetails[0].phone}<br>
+              Email: ${request.replyDetails[0].emailId}<br>
+              Reply Time: ${request.replyDetails[0].replyTime}
             </p>
           </div>` : ""}
       `;
@@ -563,7 +557,8 @@
       document.getElementById('reply-form').style.display = 'block';
     });
 
-    document.getElementById('send-reply-btn').addEventListener('click', () => {
+    async function sendReply(id) {
+      //console.log("success",id);
       const quantityAvailable = document.getElementById('quantity-available').value;
       const replyDescription = document.getElementById('reply-description').value;
       const contactNumber = document.getElementById('contact-number').value;
@@ -584,46 +579,100 @@
         return;
       }
 
-      const request = allRequests.find(r => r.id === currentRequestId);
-      if (request) {
-        request.status = 'Replied';
-        request.replyDetails = {
-          responderType: "Coordinator",
-          campId: coordinatorInfo.campId,
-          coordinatorId: coordinatorInfo.coordinatorId,
-          coordinatorName: coordinatorInfo.coordinatorName,
-          quantityAvailable: parseInt(quantityAvailable),
-          description: replyDescription,
-          phone: contactNumber,
-          email: email,
-          replyTime: new Date().toISOString().slice(0, 16).replace('T', ' ')
-        };
+      let replydata = {
+        requestId:id,
+        responderType: "Coordinator",
+        quantityAvailable: quantityAvailable,
+        replyDescription: replyDescription,
+        phone: contactNumber,
+        emailId: email
+      };
 
-        // Display all details in console
-        console.log("Coordinator Reply Details:");
-        console.log("Request ID:", request.id);
-        console.log("Item:", request.item);
-        console.log("Category:", request.category);
-        console.log("Original Quantity Needed:", request.quantity);
-        console.log("Camp Address:", request.campAddress);
-        console.log("Request Description:", request.description);
-        console.log("Request Time:", request.time);
-        console.log("Responder Type:", request.replyDetails.responderType);
-        console.log("Camp ID:", request.replyDetails.campId);
-        console.log("Coordinator ID:", request.replyDetails.coordinatorId);
-        console.log("Coordinator Name:", request.replyDetails.coordinatorName);
-        console.log("Quantity Available:", request.replyDetails.quantityAvailable);
-        console.log("Reply Description:", request.replyDetails.description);
-        console.log("Contact Phone:", request.replyDetails.phone);
-        console.log("Contact Email:", request.replyDetails.email);
-        console.log("Reply Time:", request.replyDetails.replyTime);
-        console.log("----------------------------------------");
+      try {
+        const response = await fetch(`/append-reply/`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(replydata),
+        });
 
-        alert('Reply sent successfully!');
+        if (response.ok) {
+        const updatedRequest = await response.json();
         closeModal();
-        filterAndSearchRequests();
+        fetchRequests();
+        } else {
+          console.error("Failed to reply request");
+          alert("Failed to reply request. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error replying request:", error);
+        alert("An error occurred while replying the request. Please try again.");
       }
-    });
+      
+    }
+    document.getElementById('send-reply-btn').addEventListener('click', () => sendReply(currentRequestId));
+    // document.getElementById('send-reply-btn').addEventListener('click', () => {
+    //   const quantityAvailable = document.getElementById('quantity-available').value;
+    //   const replyDescription = document.getElementById('reply-description').value;
+    //   const contactNumber = document.getElementById('contact-number').value;
+    //   const email = document.getElementById('email').value;
+
+    //   if (!quantityAvailable || !replyDescription || !contactNumber || !email) {
+    //     alert('Please fill all reply fields.');
+    //     return;
+    //   }
+
+    //   if (!contactNumber.match(/\+?[0-9]{10,12}/)) {
+    //     alert('Please enter a valid phone number (10-12 digits).');
+    //     return;
+    //   }
+
+    //   if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+    //     alert('Please enter a valid email address.');
+    //     return;
+    //   }
+
+    //   const request = allRequests.find(r => r.requestId === currentRequestId);
+    //   if (request) {
+    //     request.status = 'Replied';
+    //     request.replyDetails = {
+    //       responderType: "Coordinator",
+    //       campId: coordinatorInfo.campId,
+    //       coordinatorId: coordinatorInfo.coordinatorId,
+    //       coordinatorName: coordinatorInfo.coordinatorName,
+    //       quantityAvailable: parseInt(quantityAvailable),
+    //       description: replyDescription,
+    //       phone: contactNumber,
+    //       email: email,
+    //       replyTime: new Date().toISOString().slice(0, 16).replace('T', ' ')
+    //     };
+
+    //     // Display all details in console
+    //     console.log("Coordinator Reply Details:");
+    //     console.log("Request ID:", request.id);
+    //     console.log("Item:", request.item);
+    //     console.log("Category:", request.category);
+    //     console.log("Original Quantity Needed:", request.quantity);
+    //     console.log("Camp Address:", request.campAddress);
+    //     console.log("Request Description:", request.description);
+    //     console.log("Request Time:", request.time);
+    //     console.log("Responder Type:", request.replyDetails.responderType);
+    //     console.log("Camp ID:", request.replyDetails.campId);
+    //     console.log("Coordinator ID:", request.replyDetails.coordinatorId);
+    //     console.log("Coordinator Name:", request.replyDetails.coordinatorName);
+    //     console.log("Quantity Available:", request.replyDetails.quantityAvailable);
+    //     console.log("Reply Description:", request.replyDetails.description);
+    //     console.log("Contact Phone:", request.replyDetails.phone);
+    //     console.log("Contact Email:", request.replyDetails.email);
+    //     console.log("Reply Time:", request.replyDetails.replyTime);
+    //     console.log("----------------------------------------");
+
+    //     alert('Reply sent successfully!');
+    //     closeModal();
+    //     filterAndSearchRequests();
+    //   }
+    // });
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
