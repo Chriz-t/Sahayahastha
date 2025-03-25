@@ -152,10 +152,22 @@
           <input type="text" id="username" name="userId" placeholder="Enter Username">
           <div class="error" id="usererror"></div>
       </div>
-      <div class="input-container-signIn">
+      <!-- <div class="input-container-signIn">
         <input type="password" id="password" name="pass1" placeholder="Enter Password">
         <div class="error" id="passerror"></div>
-      </div style="align-content:left;">
+      </div style="align-content:left;"> -->
+      <div class="input-container-signIn" style="position: relative;">
+        <input type="password" id="password" name="pass1" placeholder="Enter Password">
+        <span id="togglePassword"
+          style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+          <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="gray" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg>
+        </span>
+        <div class="error" id="passerror"></div>
+      </div>
 
       <div>
         <p class="login-link-signUp">
@@ -175,6 +187,26 @@
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
+
+
+      const passwordInput = document.getElementById("password");
+      const togglePassword = document.getElementById("togglePassword");
+      const eyeIcon = document.getElementById("eyeIcon");
+
+      const showIcon = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+      const hideIcon = `<path d="M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18.31 18.31 0 0 1 4.22-5.64"/><path d="M21 21l-2-2"/><path d="M3 3l18 18"/>`;
+
+      togglePassword.addEventListener("click", function () {
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          eyeIcon.innerHTML = hideIcon;
+        } else {
+          passwordInput.type = "password";
+          eyeIcon.innerHTML = showIcon;
+        }
+      });
+
+
       document.getElementById("signInButton").addEventListener("click", async function (e) {
         e.preventDefault();
 
@@ -204,12 +236,12 @@
             });
 
             if (!response.ok) {
-              const errorText = await response.text();  
+              const errorText = await response.text();
               console.error("Server Error Response:", errorText);
               throw new Error("Failed to validate: " + errorText);
             }
 
-            const data = await response.json(); 
+            const data = await response.json();
             console.log("Coordinator validated successfully:", data);
 
             let resp = data.resp;

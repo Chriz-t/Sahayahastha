@@ -490,17 +490,41 @@
 
     filterAndSearchRequests();
 
+
     function viewRequest(reqid) {
-      const request = allRequests.find(r => r.requestId === reqid);
-      if (!request) return;
+    const request = allRequests.find(r => r.requestId === reqid);
+    if (!request) return;
 
-      currentRequestId = reqid;
-      const modal = document.getElementById('modal');
-      const content = document.getElementById('modal-content-text');
-      const replyBtn = document.getElementById('reply-btn');
-      const replyForm = document.getElementById('reply-form');
+    currentRequestId = reqid;
+    const modal = document.getElementById('modal');
+    const content = document.getElementById('modal-content-text');
+    const replyBtn = document.getElementById('reply-btn');
+    const replyForm = document.getElementById('reply-form');
 
-      content.innerHTML = `
+    let replyDetailsHTML = "";
+    
+    // If there are replies, loop through all replyDetails objects
+    if (request.replyDetails && request.replyDetails.length > 0) {
+        request.replyDetails.forEach(reply => {
+            replyDetailsHTML += `
+                <div class="modal-row">
+                  <label>Reply Details:</label>
+                  <p>
+                    Responder Type: ${reply.responderType}<br>
+                    ${reply.responderType === "Coordinator" ? 
+                      `Camp ID: ${reply.campId}<br>Camp Address: ${reply.campAddress}<br>Coordinator ID: ${reply.coordinatorId}<br>` : ""}
+                    Name: ${reply.coordinator_name}<br>
+                    Quantity Available: ${reply.quantityAvailable}<br>
+                    Description: ${reply.replyDescription}<br>
+                    Phone: ${reply.phone}<br>
+                    Email: ${reply.emailId}<br>
+                    Reply Time: ${reply.replyTime}
+                  </p>
+                </div>`;
+        });
+    }
+
+    content.innerHTML = `
         <div class="modal-row">
           <label>Category:</label>
           <p>${request.category}</p>
@@ -529,28 +553,77 @@
           <label>Coordinator:</label>
           <p>${request.coordinator_name} (${request.email})</p>
         </div>
-        ${request.replyDetails ? `
-          <div class="modal-row">
-            <label>Reply Details:</label>
-            <p>
-              Responder Type: ${request.replyDetails[0].responderType}<br>
-              ${request.replyDetails[0].responderType === "Coordinator" ?
-            `Camp ID: ${request.replyDetails[0].campId}<br>Coordinator Id: ${request.replyDetails[0].coordinatorId}<br>` :
-            ""}
-              Name: ${request.replyDetails[0].coordinator_name}<br>
-              Quantity Available: ${request.replyDetails[0].quantityAvailable}<br>
-              Description: ${request.replyDetails[0].replyDescription}<br>
-              Phone: ${request.replyDetails[0].phone}<br>
-              Email: ${request.replyDetails[0].emailId}<br>
-              Reply Time: ${request.replyDetails[0].replyTime}
-            </p>
-          </div>` : ""}
-      `;
+        ${replyDetailsHTML} <!-- Insert all replies here -->
+    `;
 
-      replyBtn.style.display = request.status === 'Waiting for Reply' ? 'block' : 'none';
-      replyForm.style.display = 'none';
-      modal.style.display = 'flex';
-    }
+    replyBtn.style.display = request.quantity !== 0 ? 'block' : 'none';
+    replyForm.style.display = 'none';
+    modal.style.display = 'flex';
+}
+
+
+
+    // function viewRequest(reqid) {
+    //   const request = allRequests.find(r => r.requestId === reqid);
+    //   if (!request) return;
+
+    //   currentRequestId = reqid;
+    //   const modal = document.getElementById('modal');
+    //   const content = document.getElementById('modal-content-text');
+    //   const replyBtn = document.getElementById('reply-btn');
+    //   const replyForm = document.getElementById('reply-form');
+
+    //   content.innerHTML = `
+    //     <div class="modal-row">
+    //       <label>Category:</label>
+    //       <p>${request.category}</p>
+    //     </div>
+    //     <div class="modal-row">
+    //       <label>Item Name:</label>
+    //       <p>${request.itemName}</p>
+    //     </div>
+    //     <div class="modal-row">
+    //       <label>Quantity Needed:</label>
+    //       <p>${request.quantity}</p>
+    //     </div>
+    //     <div class="modal-row">
+    //       <label>Time of Request:</label>
+    //       <p>${request.time}</p>
+    //     </div>
+    //     <div class="modal-row">
+    //       <label>Camp Address:</label>
+    //       <p>${request.campaddress}</p>
+    //     </div>
+    //     <div class="modal-row">
+    //       <label>Full Description:</label>
+    //       <p>${request.itemDesc}</p>
+    //     </div>
+    //     <div class="modal-row">
+    //       <label>Coordinator:</label>
+    //       <p>${request.coordinator_name} (${request.email})</p>
+    //     </div>
+    //     ${request.replyDetails ? `
+    //       <div class="modal-row">
+    //         <label>Reply Details:</label>
+    //         <p>
+    //           Responder Type: ${request.replyDetails[0].responderType}<br>
+    //           ${request.replyDetails[0].responderType === "Coordinator" ?
+    //         `Camp ID: ${request.replyDetails[0].campId}<br>Coordinator Id: ${request.replyDetails[0].coordinatorId}<br>` :
+    //         ""}
+    //           Name: ${request.replyDetails[0].coordinator_name}<br>
+    //           Quantity Available: ${request.replyDetails[0].quantityAvailable}<br>
+    //           Description: ${request.replyDetails[0].replyDescription}<br>
+    //           Phone: ${request.replyDetails[0].phone}<br>
+    //           Email: ${request.replyDetails[0].emailId}<br>
+    //           Reply Time: ${request.replyDetails[0].replyTime}
+    //         </p>
+    //       </div>` : ""}
+    //   `;
+
+    //   replyBtn.style.display = request.quantity !=0 ? 'block' : 'none';
+    //   replyForm.style.display = 'none';
+    //   modal.style.display = 'flex';
+    // }
 
     document.getElementById('reply-btn').addEventListener('click', () => {
       document.getElementById('reply-btn').style.display = 'none';
@@ -612,67 +685,7 @@
       
     }
     document.getElementById('send-reply-btn').addEventListener('click', () => sendReply(currentRequestId));
-    // document.getElementById('send-reply-btn').addEventListener('click', () => {
-    //   const quantityAvailable = document.getElementById('quantity-available').value;
-    //   const replyDescription = document.getElementById('reply-description').value;
-    //   const contactNumber = document.getElementById('contact-number').value;
-    //   const email = document.getElementById('email').value;
-
-    //   if (!quantityAvailable || !replyDescription || !contactNumber || !email) {
-    //     alert('Please fill all reply fields.');
-    //     return;
-    //   }
-
-    //   if (!contactNumber.match(/\+?[0-9]{10,12}/)) {
-    //     alert('Please enter a valid phone number (10-12 digits).');
-    //     return;
-    //   }
-
-    //   if (!email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
-    //     alert('Please enter a valid email address.');
-    //     return;
-    //   }
-
-    //   const request = allRequests.find(r => r.requestId === currentRequestId);
-    //   if (request) {
-    //     request.status = 'Replied';
-    //     request.replyDetails = {
-    //       responderType: "Coordinator",
-    //       campId: coordinatorInfo.campId,
-    //       coordinatorId: coordinatorInfo.coordinatorId,
-    //       coordinatorName: coordinatorInfo.coordinatorName,
-    //       quantityAvailable: parseInt(quantityAvailable),
-    //       description: replyDescription,
-    //       phone: contactNumber,
-    //       email: email,
-    //       replyTime: new Date().toISOString().slice(0, 16).replace('T', ' ')
-    //     };
-
-    //     // Display all details in console
-    //     console.log("Coordinator Reply Details:");
-    //     console.log("Request ID:", request.id);
-    //     console.log("Item:", request.item);
-    //     console.log("Category:", request.category);
-    //     console.log("Original Quantity Needed:", request.quantity);
-    //     console.log("Camp Address:", request.campAddress);
-    //     console.log("Request Description:", request.description);
-    //     console.log("Request Time:", request.time);
-    //     console.log("Responder Type:", request.replyDetails.responderType);
-    //     console.log("Camp ID:", request.replyDetails.campId);
-    //     console.log("Coordinator ID:", request.replyDetails.coordinatorId);
-    //     console.log("Coordinator Name:", request.replyDetails.coordinatorName);
-    //     console.log("Quantity Available:", request.replyDetails.quantityAvailable);
-    //     console.log("Reply Description:", request.replyDetails.description);
-    //     console.log("Contact Phone:", request.replyDetails.phone);
-    //     console.log("Contact Email:", request.replyDetails.email);
-    //     console.log("Reply Time:", request.replyDetails.replyTime);
-    //     console.log("----------------------------------------");
-
-    //     alert('Reply sent successfully!');
-    //     closeModal();
-    //     filterAndSearchRequests();
-    //   }
-    // });
+    
 
     function closeModal() {
       document.getElementById('modal').style.display = 'none';

@@ -742,20 +742,23 @@ def append_reply(request):
         requestId=data.get("requestId")
         camp_id=request.session.get('camp_id')
         cordata=coordinator_collection.find_one({"camp_id":camp_id})
+        campdata=camp_collection.find_one({"campId":camp_id})
         name=" "+cordata['first_name']+" "+cordata['last_name']
         rqdata=request_collection.find_one({"requestId":requestId})
+        newqty=rqdata['quantity']-int(data.get("quantityAvailable"))
         replyData={
             "responderType":data.get("responderType"),
             "campId":camp_id,
+            "campAddress":campdata['address'],
             "coordinator_name":name,
             "coordinatorId":cordata['userId'],
-            "quantityAvailable":data.get("quantityAvailable"),
+            "quantityAvailable":int(data.get("quantityAvailable")),
             "replyDescription":data.get("replyDescription"),
             "phone":data.get("phone"),
             "emailId":data.get("emailId"),
             "replyTime":datetime.now()
         }
-        request_collection.update_one({"requestId": requestId}, {"$set":{"status":"Replied"},"$push":{"replyDetails":replyData}})
+        request_collection.update_one({"requestId": requestId}, {"$set":{"status":"Replied"},"$set":{"quantity":newqty},"$push":{"replyDetails":replyData}})
         updated_request = request_collection.find_one({"requestId": requestId}, {'_id': 0})
         return JsonResponse(updated_request)
     return JsonResponse({"error": "Invalid request"}, status=400)
