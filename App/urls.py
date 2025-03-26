@@ -38,4 +38,5 @@ urlpatterns = [
     path('validate-coordinator/',views.validate_coordinator,name="validate-coordinator"),
     path('append-reply/',views.append_reply,name="append-reply"),
     path('get-all-requests/',views.get_all_requests,name='get-all-requests'),
+    path('donor',views.donor,name='donor'), 
 ]

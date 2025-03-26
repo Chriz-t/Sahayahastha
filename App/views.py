@@ -23,6 +23,7 @@ task_collection = db["tasks"]
 coordinator_collection=db["coordinators"]
 item_collection=db["inventory"]
 request_collection=db["requests"]
+donor_collection=db["donor"]
 #
 # Helper function to generate a unique user ID
 def generate_unique_uid():
@@ -30,6 +31,12 @@ def generate_unique_uid():
         uid = f"UID{random.randint(1000000, 9999999)}"
         if not users_collection.find_one({"userId": uid}):  # Check if UID already exists
             return uid
+        
+def generate_unique_donorid():
+    while True:
+        did=f"D{random.randint(100000,999999)}"
+        if not donor_collection.find_one({"donorId":did}):
+            return did
         
 def generate_unique_taskid():
     while True:
@@ -565,7 +572,7 @@ def insertcoord(request):
     user_data = {
             "userId": user_id,
             "first_name": "Raphael",
-            "last_name": "Admin",
+            "last_name": "Coord",
             "password": hashed_password.decode('utf-8'),  # Store hashed password
             "camp_id": "CMP237"  # Store the camp name with the user
         }
@@ -746,20 +753,52 @@ def append_reply(request):
         name=" "+cordata['first_name']+" "+cordata['last_name']
         rqdata=request_collection.find_one({"requestId":requestId})
         newqty=rqdata['quantity']-int(data.get("quantityAvailable"))
-        replyData={
-            "responderType":data.get("responderType"),
-            "campId":camp_id,
-            "campAddress":campdata['address'],
-            "coordinator_name":name,
-            "coordinatorId":cordata['userId'],
-            "quantityAvailable":int(data.get("quantityAvailable")),
-            "replyDescription":data.get("replyDescription"),
-            "phone":data.get("phone"),
-            "emailId":data.get("emailId"),
-            "replyTime":datetime.now()
+        replyData={}
+        if(data.get("responderType")=="Coordinator"):
+            replyData={
+                "responderType":data.get("responderType"),
+                "campId":camp_id,
+                "campAddress":campdata['address'],
+                "coordinator_name":name,
+                "coordinatorId":cordata['userId'],
+                "quantityAvailable":int(data.get("quantityAvailable")),
+                "replyDescription":data.get("replyDescription"),
+                "phone":data.get("phone"),
+                "emailId":data.get("emailId"),
+                "replyTime":datetime.now()
+            }
+        else:
+            ddata=donor_collection.find_one({"phone":data.get("phone")})
+            if ddata:
+                did=ddata['donorId']
+            else:
+                did=generate_unique_donorid()
+                
+            donorData={
+                "donorId":did,
+                "donorName":data.get("donorName"),
+                "donorAddress":data.get("collectionAddress"),
+                "phone":data.get("phone"),
+                "emailId":data.get("emailId")
+            }
+
+            donor_collection.insert_one(donorData)
+
+            replyData={
+                "responderType":data.get("responderType"),
+                "donorId":did,
+                "donor_name":data.get("donorName"),
+                "donorAddress":data.get("collectionAddress"),
+                "quantityAvailable":int(data.get("quantityAvailable")),
+                "replyDescription":data.get("replyDescription"),
+                "phone":data.get("phone"),
+                "emailId":data.get("emailId"),
+                "replyTime":datetime.now()
         }
         request_collection.update_one({"requestId": requestId}, {"$set":{"status":"Replied"},"$set":{"quantity":newqty},"$push":{"replyDetails":replyData}})
         updated_request = request_collection.find_one({"requestId": requestId}, {'_id': 0})
         return JsonResponse(updated_request)
     return JsonResponse({"error": "Invalid request"}, status=400)
     
+def donor(request):
+    return render(request,"App/donor.html")

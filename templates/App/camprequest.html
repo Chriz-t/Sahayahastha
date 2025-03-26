@@ -438,10 +438,9 @@
           throw new Error("Failed to fetch requests");
         }
         const data = await response.json();
-        allRequests = data.reqlist; // Ensure the response has `itemsList`
+        allRequests = data.reqlist; 
         console.log(allRequests);
         displayRequests(allRequests);
-        //await displayRequests(requests);
       } catch (error) {
         console.error("Error fetching requests:", error);
         alert("An error occurred while fetching requests. Please try again later.");
@@ -562,76 +561,12 @@
 }
 
 
-
-    // function viewRequest(reqid) {
-    //   const request = allRequests.find(r => r.requestId === reqid);
-    //   if (!request) return;
-
-    //   currentRequestId = reqid;
-    //   const modal = document.getElementById('modal');
-    //   const content = document.getElementById('modal-content-text');
-    //   const replyBtn = document.getElementById('reply-btn');
-    //   const replyForm = document.getElementById('reply-form');
-
-    //   content.innerHTML = `
-    //     <div class="modal-row">
-    //       <label>Category:</label>
-    //       <p>${request.category}</p>
-    //     </div>
-    //     <div class="modal-row">
-    //       <label>Item Name:</label>
-    //       <p>${request.itemName}</p>
-    //     </div>
-    //     <div class="modal-row">
-    //       <label>Quantity Needed:</label>
-    //       <p>${request.quantity}</p>
-    //     </div>
-    //     <div class="modal-row">
-    //       <label>Time of Request:</label>
-    //       <p>${request.time}</p>
-    //     </div>
-    //     <div class="modal-row">
-    //       <label>Camp Address:</label>
-    //       <p>${request.campaddress}</p>
-    //     </div>
-    //     <div class="modal-row">
-    //       <label>Full Description:</label>
-    //       <p>${request.itemDesc}</p>
-    //     </div>
-    //     <div class="modal-row">
-    //       <label>Coordinator:</label>
-    //       <p>${request.coordinator_name} (${request.email})</p>
-    //     </div>
-    //     ${request.replyDetails ? `
-    //       <div class="modal-row">
-    //         <label>Reply Details:</label>
-    //         <p>
-    //           Responder Type: ${request.replyDetails[0].responderType}<br>
-    //           ${request.replyDetails[0].responderType === "Coordinator" ?
-    //         `Camp ID: ${request.replyDetails[0].campId}<br>Coordinator Id: ${request.replyDetails[0].coordinatorId}<br>` :
-    //         ""}
-    //           Name: ${request.replyDetails[0].coordinator_name}<br>
-    //           Quantity Available: ${request.replyDetails[0].quantityAvailable}<br>
-    //           Description: ${request.replyDetails[0].replyDescription}<br>
-    //           Phone: ${request.replyDetails[0].phone}<br>
-    //           Email: ${request.replyDetails[0].emailId}<br>
-    //           Reply Time: ${request.replyDetails[0].replyTime}
-    //         </p>
-    //       </div>` : ""}
-    //   `;
-
-    //   replyBtn.style.display = request.quantity !=0 ? 'block' : 'none';
-    //   replyForm.style.display = 'none';
-    //   modal.style.display = 'flex';
-    // }
-
     document.getElementById('reply-btn').addEventListener('click', () => {
       document.getElementById('reply-btn').style.display = 'none';
       document.getElementById('reply-form').style.display = 'block';
     });
 
     async function sendReply(id) {
-      //console.log("success",id);
       const quantityAvailable = document.getElementById('quantity-available').value;
       const replyDescription = document.getElementById('reply-description').value;
       const contactNumber = document.getElementById('contact-number').value;
@@ -682,11 +617,9 @@
         console.error("Error replying request:", error);
         alert("An error occurred while replying the request. Please try again.");
       }
-      
     }
     document.getElementById('send-reply-btn').addEventListener('click', () => sendReply(currentRequestId));
     
-
     function closeModal() {
       document.getElementById('modal').style.display = 'none';
       document.getElementById('reply-form').style.display = 'none';
