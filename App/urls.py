@@ -41,4 +41,5 @@ urlpatterns = [
     path('append-reply/',views.append_reply,name="append-reply"),
     path('get-all-requests/',views.get_all_requests,name='get-all-requests'),
     path('donor',views.donor,name='donor'), 
+    path('validate-volunteer/',views.validate_volunteer,name="validate-volunteer"),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Responsive Login</title>
   <!-- <link rel="stylesheet" href="./signIn.css" /> -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -30,6 +31,28 @@
       align-items: center;
       width: 100%;
       height: 100%;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #777;
+    }
+
+    .error {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.2rem;
+      text-align: left;
+      padding-left: 0.5rem;
+    }
+
+    .input-container-signIn {
+      position: relative;
+      /* Needed for absolute positioning of icon */
     }
 
     .login {
@@ -135,18 +158,21 @@
 
 <body>
   <div class="container">
-    
+
     <div class="login">
       <p class="form-title-signIn">Sign in to Volunteer account</p>
       <div class="input-container-signIn">
-        <form action='/volunteerlogin' method="post">
+        <form action='/volunteerlogin' method="post" id="loginform">
           {% csrf_token %}
-        <input type="text" id="username" name="userId" placeholder="Enter Username">
+          <input type="text" id="username" name="userId" placeholder="Enter Username">
+          <div class="error" id="usererror"></div>
       </div>
       <div class="input-container-signIn">
         <input type="password" id="password" name="pass1" placeholder="Enter Password">
-      </div style="align-content:left;">
-    
+        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+        <div class="error" id="passerror"></div>
+      </div>
+
       <div>
         <p class="login-link-signUp">
           <a href="#"><u>forgot password&quest;</u></a>
@@ -159,12 +185,91 @@
       <p class="signup-link-signIn">
         Don't have an account? <a href="/volunteerreg">Register</a>
       </p>
-    </form>
+      </form>
     </div>
-  
-  </div>
 
-  
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+
+      const passwordInput = document.getElementById("password");
+      const togglePassword = document.getElementById("togglePassword");
+
+      togglePassword.addEventListener("click", function () {
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          togglePassword.classList.replace("fa-eye", "fa-eye-slash");
+        } else {
+          passwordInput.type = "password";
+          togglePassword.classList.replace("fa-eye-slash", "fa-eye");
+        }
+      });
+
+
+      document.getElementById("signInButton").addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        let pass = document.getElementById("password").value.trim();
+        let userid = document.getElementById("username").value.trim();
+        document.getElementById("usererror").textContent = "";
+        document.getElementById("passerror").textContent = "";
+        let isValid = true;
+        if (userid === "") {
+          document.getElementById("usererror").textContent = "Please Enter userId!";
+          isValid = false;
+        }
+        if (pass === "") {
+          document.getElementById("passerror").textContent = "Please Enter password!";
+          isValid = false;
+        }
+
+        try {
+          if (isValid) {
+
+            const response = await fetch("/validate-volunteer/", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ pass: pass, userid: userid }),
+            });
+
+            if (!response.ok) {
+              const errorText = await response.text();
+              console.error("Server Error Response:", errorText);
+              throw new Error("Failed to validate: " + errorText);
+            }
+
+            const data = await response.json();
+            console.log("Volunteer validated successfully:", data);
+
+            let resp = data.resp;
+
+
+            if (resp.user !== "ok") {
+              document.getElementById("usererror").textContent = "UserId not found!";
+              isValid = false;
+            }
+            if (resp.passw !== "ok") {
+              document.getElementById("passerror").textContent = "Invalid password!";
+              isValid = false;
+            }
+
+            if (isValid) {
+              document.getElementById("loginform").submit();
+            }
+
+          }
+
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      });
+    });
+
+  </script>
+
 </body>
 
 </html>

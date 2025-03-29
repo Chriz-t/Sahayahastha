@@ -190,6 +190,45 @@ def volunteerreg(request):
         return redirect('volunteerlogin')
     return render(request, "App/volunteerreg2.html")
 
+@csrf_exempt
+def validate_volunteer(request):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request method"}, status=405)  # 405 Method Not Allowed
+
+    try:
+        # ✅ Handle empty body safely
+        if not request.body:
+            return JsonResponse({"error": "Empty request body"}, status=400)
+
+        data = json.loads(request.body.decode("utf-8"))
+
+        userid = data.get("userid")
+        pass1 = data.get("pass")
+
+        if not userid or not pass1:
+            return JsonResponse({"error": "Missing userid or password"}, status=400)
+
+        # Default response
+        response = {"user": "notok", "passw": "notok"}
+
+        # Fetch user details in a single query
+        user_record = volunteer_collection.find_one({"userId": userid}, {"password": 1})
+
+        if user_record:
+            response["user"] = "ok"
+            hashed_password = user_record.get("password")  # Retrieve hashed password from DB
+
+            if hashed_password and bcrypt.checkpw(pass1.encode("utf-8"), hashed_password.encode("utf-8")):
+                response["passw"] = "ok"
+
+        return JsonResponse({"resp": response})
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON format"}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 # Fetch districts for dropdown
 def get_districts(request):
     districts = list(district_collection.find({}, {"_id": 0, "name": 1}))  # Fetch only names
