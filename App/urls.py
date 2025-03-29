@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from .views import get_districts,get_camps,get_tasks
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -39,4 +41,4 @@ urlpatterns = [
     path('append-reply/',views.append_reply,name="append-reply"),
     path('get-all-requests/',views.get_all_requests,name='get-all-requests'),
     path('donor',views.donor,name='donor'), 
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

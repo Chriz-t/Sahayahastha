@@ -143,5 +143,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS=(os.path.join(BASE_DIR,"static"),)
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+#STATICFILES_DIRS=(os.path.join(BASE_DIR,"static"),)
 #STATIC_ROOT=os.path.join(BASE_DIR,"/static/")
+
+CORS_ALLOWED_ORIGINS = [
+    "https://kit.fontawesome.com",
+]
+
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+X_FRAME_OPTIONS = "SAMEORIGIN"
+
+CSP_SCRIPT_SRC = ("'self'", "https://kit.fontawesome.com")
